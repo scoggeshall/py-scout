@@ -1,11 +1,10 @@
-
----
-
 # py-scout
+
+> Plug in → run → instantly identify the switch and port for any network drop using LLDP/CDP.
 
 Lightweight CLI tool to identify the **switch and port** a device is connected to using LLDP/CDP.
 
-Built on top of **TShark**.
+Built on top of TShark.
 
 ---
 
@@ -19,16 +18,16 @@ plug in → run tool → get switch + port
 
 Works by passively listening for:
 
-* LLDP (standard)
-* CDP (Cisco, preferred)
+- LLDP (standard)
+- CDP (Cisco)
 
 ---
 
 ## Requirements
 
-* Windows
-* Python 3.10+
-* Wireshark installed (provides `tshark`)
+- Windows
+- Python 3.10+
+- Wireshark installed (provides `tshark`)
 
 Verify:
 
@@ -47,11 +46,9 @@ cd py-scout
 
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
-
-pip install pyshark
 ```
 
-> Note: `pyshark` is optional; the tool uses `tshark` directly.
+> No Python dependencies required.
 
 ---
 
@@ -90,14 +87,12 @@ py .\py-scout.py --timeout 60
 3. Prefers adapters with status **Up**
 4. Captures LLDP/CDP packets
 5. Parses neighbor information
-6. **Prefers CDP over LLDP**
+6. Returns the **first valid neighbor received**
 
 Logic:
 
 ```text
-LLDP arrives first → store
-CDP arrives later → use CDP
-No CDP → fallback to LLDP
+First LLDP or CDP packet → exit immediately
 ```
 
 ---
@@ -130,13 +125,12 @@ This tool depends on the switch advertising:
 
 ### Will NOT work if:
 
-* LLDP disabled
-* CDP disabled
-* Traffic filtered by:
-
-  * IP phones (pass-through ports)
-  * unmanaged switches
-  * certain docks/adapters
+- LLDP disabled
+- CDP disabled
+- Traffic filtered by:
+  - IP phones/pass-through ports
+  - unmanaged switches
+  - certain docks/adapters
 
 ---
 
@@ -150,8 +144,8 @@ py .\py-scout.py --list
 
 Confirm:
 
-* Correct adapter selected
-* Status = Up
+- Correct adapter selected
+- Status = Up
 
 ---
 
@@ -165,19 +159,19 @@ tshark -i <interface_number> -l -Y "lldp or cdp"
 
 ## Design Notes
 
-* Uses raw `tshark` for reliability
-* No dependency on fragile PowerShell parsing for selection
-* Designed for **field use**
+- Uses raw `tshark` for reliability
+- No external Python dependencies
+- Designed for **field use**
 
 ---
 
 ## Future Enhancements
 
-* CSV / SQLite logging
-* JSON output mode
-* MAC address correlation
-* Multi-interface scan mode
-* Standalone executable build
+- CSV / SQLite logging
+- JSON output mode
+- MAC address correlation
+- Multi-interface scan mode
+- Standalone executable build
 
 ---
 
@@ -186,5 +180,3 @@ tshark -i <interface_number> -l -Y "lldp or cdp"
 ```text
 A portable switch-port identification tool
 ```
-
----
