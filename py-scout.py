@@ -251,9 +251,6 @@ def main() -> None:
         bufsize=1,
     )
 
-    best_cdp = None
-    best_lldp = None
-
     try:
         assert proc.stdout is not None
 
@@ -266,25 +263,13 @@ def main() -> None:
 
             neighbor = parse_neighbor(line)
 
-            if not neighbor["switch"] and not neighbor["port"]:
-                continue
-
-            if neighbor["protocol"] == "CDP":
-                best_cdp = neighbor
-                break
-
-            if neighbor["protocol"] == "LLDP" and not best_lldp:
-                best_lldp = neighbor
-
-        neighbor = best_cdp or best_lldp
-
-        if neighbor:
-            print("Connected switchport found")
-            print("--------------------------")
-            print(f"Protocol : {neighbor['protocol']}")
-            print(f"Switch   : {neighbor['switch'] or 'unknown'}")
-            print(f"Port     : {neighbor['port'] or 'unknown'}")
-            return
+            if neighbor["switch"] or neighbor["port"]:
+                print("Connected switchport found")
+                print("--------------------------")
+                print(f"Protocol : {neighbor['protocol']}")
+                print(f"Switch   : {neighbor['switch'] or 'unknown'}")
+                print(f"Port     : {neighbor['port'] or 'unknown'}")
+                return
 
         print("No LLDP/CDP neighbor detected.")
         print("Likely causes: LLDP/CDP disabled, wrong adapter, dock/phone filtering, or no switch advertisement.")
@@ -294,7 +279,6 @@ def main() -> None:
 
     finally:
         proc.terminate()
-
 
 if __name__ == "__main__":
     main()
