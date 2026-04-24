@@ -3,7 +3,6 @@ import json
 import re
 import subprocess
 import sys
-import time
 from typing import Any
 
 
@@ -97,7 +96,8 @@ def auto_select_tshark_interface() -> tuple[str | None, str | None]:
     adapters = get_windows_adapters()
 
     ethernet_candidates = [
-        iface for iface in interfaces
+        iface
+        for iface in interfaces
         if "ethernet" in iface["name"].lower() and not is_bad_interface(iface["name"])
     ]
 
@@ -105,15 +105,14 @@ def auto_select_tshark_interface() -> tuple[str | None, str | None]:
         return None, None
 
     up_candidates = [
-        iface for iface in ethernet_candidates
+        iface
+        for iface in ethernet_candidates
         if is_adapter_up(iface["name"], adapters)
     ]
 
     if up_candidates:
         return up_candidates[0]["number"], up_candidates[0]["name"]
 
-    # Fallback: tshark sees Ethernet adapters, but Windows status lookup failed.
-    # Use the first sane Ethernet capture interface rather than failing.
     return ethernet_candidates[0]["number"], ethernet_candidates[0]["name"]
 
 
@@ -218,28 +217,30 @@ def main() -> None:
 
         if not iface_num:
             print(f"ERROR: Could not map Windows adapter '{adapter_name}' to tshark interface.")
-            print("Run: py .\\identify-port.py --list")
+            print("Run: py .\\py-scout.py --list")
             sys.exit(1)
     else:
         iface_num, adapter_name = auto_select_tshark_interface()
 
         if not iface_num or not adapter_name:
             print("ERROR: Could not auto-select an active Ethernet capture interface.")
-            print("Run: py .\\identify-port.py --list")
+            print("Run: py .\\py-scout.py --list")
             sys.exit(1)
 
     print(f"Using adapter: {adapter_name}")
     print(f"Using tshark interface: {iface_num}")
-    print(f"Waiting up to {args.timeout} seconds for LLDP/CDP...\n")
+    print(f"Waiting up to {args.timeout} seconds for LLDP/CDP...\n", flush=True)
 
     cmd = [
         "tshark",
-        "-i", str(iface_num),
+        "-i",
+        str(iface_num),
+        "-a",
+        f"duration:{args.timeout}",
         "-l",
-        "-Y", "lldp or cdp",
+        "-Y",
+        "lldp or cdp",
     ]
-
-    start = time.time()
 
     proc = subprocess.Popen(
         cmd,
@@ -254,13 +255,7 @@ def main() -> None:
     try:
         assert proc.stdout is not None
 
-        while time.time() - start < args.timeout:
-            line = proc.stdout.readline()
-
-            if not line:
-                time.sleep(0.2)
-                continue
-
+        for line in proc.stdout:
             neighbor = parse_neighbor(line)
 
             if neighbor["switch"] or neighbor["port"]:
@@ -271,14 +266,14 @@ def main() -> None:
                 print(f"Port     : {neighbor['port'] or 'unknown'}")
                 return
 
-        print("No LLDP/CDP neighbor detected.")
-        print("Likely causes: LLDP/CDP disabled, wrong adapter, dock/phone filtering, or no switch advertisement.")
+        print("No LLDP/CDP neighbor detected (timeout reached).")
 
     except KeyboardInterrupt:
         print("\nStopped.")
 
     finally:
         proc.terminate()
+
 
 if __name__ == "__main__":
     main()
