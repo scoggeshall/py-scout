@@ -24,22 +24,6 @@ Works by passively listening for:
 
 ---
 
-## Example Output
-
-```text
-Using adapter: Ethernet 2
-Using tshark interface: 7
-Waiting up to 90 seconds for LLDP/CDP...
-
-Connected switchport found
---------------------------
-Protocol : CDP
-Switch   : EB9N-SWL2STACK.coj.net
-Port     : GigabitEthernet2/0/15
-```
-
----
-
 ## Requirements
 
 * Windows
@@ -67,7 +51,7 @@ py -m venv .venv
 pip install pyshark
 ```
 
-> Note: `pyshark` is optional; core tool uses `tshark` directly.
+> Note: `pyshark` is optional; the tool uses `tshark` directly.
 
 ---
 
@@ -88,7 +72,7 @@ py .\py-scout.py --list
 ### Manually specify interface
 
 ```powershell
-py .\py-scout.py --interface "Ethernet 2"
+py .\py-scout.py --interface "Ethernet"
 ```
 
 ### Custom timeout
@@ -101,15 +85,11 @@ py .\py-scout.py --timeout 60
 
 ## How It Works
 
-1. Reads available capture interfaces from `tshark -D`
+1. Reads capture interfaces from `tshark -D`
 2. Filters for usable Ethernet adapters
-3. Prefers adapters that are **Up**
+3. Prefers adapters with status **Up**
 4. Captures LLDP/CDP packets
-5. Parses:
-
-* LLDP → System Name, Port ID
-* CDP → Device ID, Port ID
-
+5. Parses neighbor information
 6. **Prefers CDP over LLDP**
 
 Logic:
@@ -130,7 +110,7 @@ No CDP → fallback to LLDP
    - Bluetooth
    - Loopback
    - Virtual adapters
-   - VPN adapters (PANGP)
+   - VPN adapters
 
 2. Select:
    - Ethernet adapters only
@@ -150,19 +130,9 @@ This tool depends on the switch advertising:
 
 ### Will NOT work if:
 
-* LLDP disabled:
-
-  ```cisco
-  no lldp run
-  ```
-
-* CDP disabled:
-
-  ```cisco
-  no cdp enable
-  ```
-
-* Traffic blocked by:
+* LLDP disabled
+* CDP disabled
+* Traffic filtered by:
 
   * IP phones (pass-through ports)
   * unmanaged switches
@@ -173,8 +143,6 @@ This tool depends on the switch advertising:
 ## Troubleshooting
 
 ### No output
-
-Run:
 
 ```powershell
 py .\py-scout.py --list
@@ -187,7 +155,7 @@ Confirm:
 
 ---
 
-### Validate manually
+### Manual validation
 
 ```powershell
 tshark -i <interface_number> -l -Y "lldp or cdp"
@@ -197,9 +165,9 @@ tshark -i <interface_number> -l -Y "lldp or cdp"
 
 ## Design Notes
 
-* Uses raw `tshark` instead of wrappers for reliability
-* Avoids PowerShell dependency for adapter detection
-* Designed for **field use** (fast, deterministic)
+* Uses raw `tshark` for reliability
+* No dependency on fragile PowerShell parsing for selection
+* Designed for **field use**
 
 ---
 
@@ -209,18 +177,14 @@ tshark -i <interface_number> -l -Y "lldp or cdp"
 * JSON output mode
 * MAC address correlation
 * Multi-interface scan mode
-* Packaging as standalone executable
+* Standalone executable build
 
 ---
 
 ## Bottom Line
 
-This is not a packet analyzer.
-
-This is:
-
 ```text
-a portable switch-port identification tool
+A portable switch-port identification tool
 ```
 
 ---
