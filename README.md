@@ -49,6 +49,23 @@ py -m venv .venv
 
 Runtime use does not require third-party Python packages. `requirements.txt` is only needed for optional executable builds.
 
+## Download
+
+Download release builds from GitHub Releases:
+
+```text
+https://github.com/scoggeshall/py-scout/releases
+```
+
+Verify the downloaded executable hash in PowerShell:
+
+```powershell
+Get-FileHash .\py-scout.exe -Algorithm SHA256
+```
+
+Published release assets should not be replaced after publishing. If the EXE
+changes, publish a new release with a new SHA256 hash.
+
 ## CLI Usage
 
 Launching Py-Scout with no arguments opens the GUI. To use command-line mode,
