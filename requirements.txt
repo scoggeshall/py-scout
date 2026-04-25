@@ -1,2 +1,1 @@
-# Optional build dependency for creating dist/py-scout.exe
 pyinstaller>=6.0,<7.0

@@ -4,13 +4,19 @@ $ErrorActionPreference = "Stop"
 Push-Location $PSScriptRoot
 
 try {
-    $pyInstaller = Get-Command pyinstaller -ErrorAction SilentlyContinue
-    if (-not $pyInstaller) {
-        Write-Host "PyInstaller is not installed. Run: py -m pip install -r requirements.txt"
-        exit 1
+    Write-Host "Building py-scout.exe with PyInstaller..."
+
+    py -m PyInstaller `
+        --onefile `
+        --name py-scout `
+        --clean `
+        py-scout.py
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "PyInstaller build failed with exit code $LASTEXITCODE."
     }
 
-    pyinstaller --onefile --name py-scout py-scout.py
+    Write-Host "Build complete: dist\py-scout.exe"
 }
 finally {
     Pop-Location
