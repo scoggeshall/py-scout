@@ -9,6 +9,7 @@ try {
     py -m PyInstaller `
         --onefile `
         --name py-scout `
+        --windowed `
         --clean `
         py-scout.py
 
