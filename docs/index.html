@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Py-Scout is a Windows-focused switchport lookup tool for LLDP/CDP discovery using tshark."
+    >
+    <title>Py-Scout | Windows Switchport Lookup Tool</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="Primary navigation">
+        <a class="brand" href="#top" aria-label="Py-Scout home">Py-Scout</a>
+        <div class="nav-links">
+          <a href="#usage">Usage</a>
+          <a href="#logging">Logging</a>
+          <a href="#limits">Limitations</a>
+          <a href="https://github.com/scoggeshall/py-scout">GitHub</a>
+        </div>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-content">
+          <p class="eyebrow">Windows network troubleshooting</p>
+          <h1 id="hero-title">Py-Scout</h1>
+          <p class="hero-lead">
+            A Windows-focused switchport lookup tool for LLDP/CDP discovery
+            using tshark.
+          </p>
+          <p class="hero-copy">
+            Py-Scout listens for LLDP and CDP advertisements, auto-selects a
+            usable Ethernet adapter, and reports the first detected switch and
+            port. It helps network engineers identify the switchport their
+            laptop is connected to without manually building tshark commands.
+          </p>
+          <div class="hero-actions" aria-label="Project links">
+            <a class="button primary" href="https://github.com/scoggeshall/py-scout/releases">
+              Download latest release
+            </a>
+            <a class="button secondary" href="https://github.com/scoggeshall/py-scout">
+              View source
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="does-title">
+        <div class="section-heading">
+          <p class="eyebrow">What Py-Scout Does</p>
+          <h2 id="does-title">Find the connected switchport faster.</h2>
+        </div>
+        <div class="feature-grid">
+          <article class="card">
+            <h3>Listens for discovery traffic</h3>
+            <p>
+              Captures LLDP and CDP advertisements with tshark and reads the
+              neighbor details exposed by the connected network device.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Selects a practical adapter</h3>
+            <p>
+              Uses Windows adapter information and tshark interface listings to
+              choose a usable Ethernet capture interface.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Reports the first match</h3>
+            <p>
+              Prints the detected protocol, switch, port, status, and timeout
+              details in human-readable or JSON output.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section split" aria-labelledby="requirements-title">
+        <div class="section-heading">
+          <p class="eyebrow">Requirements</p>
+          <h2 id="requirements-title">Designed for Windows and tshark.</h2>
+        </div>
+        <ul class="check-list">
+          <li>Windows</li>
+          <li>Python 3.10 or newer for source usage</li>
+          <li>Wireshark installed</li>
+          <li>tshark available on PATH</li>
+          <li>tkinter required for GUI mode</li>
+          <li>PyInstaller only required for building the executable</li>
+        </ul>
+      </section>
+
+      <section class="section command-section" id="usage" aria-labelledby="cli-title">
+        <div class="section-heading">
+          <p class="eyebrow">CLI Usage</p>
+          <h2 id="cli-title">Run from source when Python is available.</h2>
+        </div>
+        <pre><code>py .\py-scout.py --help
+py .\py-scout.py --list
+py .\py-scout.py --timeout 10
+py .\py-scout.py --json --timeout 10
+py .\py-scout.py --gui</code></pre>
+      </section>
+
+      <section class="section command-section" aria-labelledby="exe-title">
+        <div class="section-heading">
+          <p class="eyebrow">EXE Usage</p>
+          <h2 id="exe-title">Use the release executable for portable checks.</h2>
+        </div>
+        <pre><code>.\py-scout.exe --help
+.\py-scout.exe --list
+.\py-scout.exe --timeout 10
+.\py-scout.exe --json --timeout 10
+.\py-scout.exe --gui</code></pre>
+      </section>
+
+      <section class="section" id="logging" aria-labelledby="logging-title">
+        <div class="section-heading">
+          <p class="eyebrow">Logging</p>
+          <h2 id="logging-title">Optional result logs for repeatable troubleshooting.</h2>
+        </div>
+        <div class="text-grid">
+          <article class="card">
+            <h3>CSV and JSON output</h3>
+            <p>
+              Py-Scout can write logs to <code>logs\py-scout-log.csv</code> and
+              <code>logs\py-scout-log.json</code>. CSV logging uses
+              <code>--log-csv</code>; JSON logging uses <code>--log-json</code>.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Controlled location</h3>
+            <p>
+              <code>--log-dir</code> controls the output directory and defaults
+              to <code>logs</code>. Failures during scan setup should still
+              produce failure log entries with the shared schema.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Result records only</h3>
+            <p>
+              Logs record scan results, not raw packet captures. They are useful
+              for tracking attempts without storing full capture files.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section split" aria-labelledby="privacy-title">
+        <div class="section-heading">
+          <p class="eyebrow">Safety and Privacy</p>
+          <h2 id="privacy-title">Local execution, local output.</h2>
+        </div>
+        <div class="panel">
+          <p>
+            Py-Scout runs locally and does not upload captures or logs anywhere.
+            Packet captures and network discovery data may contain sensitive
+            environment details, so handle saved output carefully.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="limits" aria-labelledby="limits-title">
+        <div class="section-heading">
+          <p class="eyebrow">Limitations</p>
+          <h2 id="limits-title">Discovery depends on the local network path.</h2>
+        </div>
+        <ul class="detail-list">
+          <li>LLDP or CDP must be advertised for detection to work.</li>
+          <li>
+            Some docks, pass-through phones, unmanaged switches, or filtered
+            links may block discovery traffic.
+          </li>
+          <li>
+            Interface matching depends on Windows adapter names and tshark
+            interface names lining up.
+          </li>
+          <li>The tool is intentionally Windows-focused.</li>
+        </ul>
+      </section>
+
+      <section class="section" aria-labelledby="release-title">
+        <div class="section-heading">
+          <p class="eyebrow">Release Notes</p>
+          <h2 id="release-title">Current first-version site notes.</h2>
+        </div>
+        <ul class="detail-list">
+          <li>
+            <code>build.ps1</code> calls PyInstaller through the Python module
+            path instead of relying on <code>pyinstaller.exe</code> being on PATH.
+          </li>
+          <li>Scanner setup failures are logged with the shared schema.</li>
+          <li>
+            <code>requirements.txt</code> pins
+            <code>pyinstaller&gt;=6.0,&lt;7.0</code>.
+          </li>
+        </ul>
+      </section>
+
+      <section class="section" aria-labelledby="screenshots-title">
+        <div class="section-heading">
+          <p class="eyebrow">Screenshot Placeholder</p>
+          <h2 id="screenshots-title">Screenshots can be added after release assets are ready.</h2>
+        </div>
+        <div class="screenshot-placeholder" role="img" aria-label="Placeholder for future Py-Scout screenshots">
+          <div class="placeholder-bar">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="placeholder-body">
+            <p class="terminal-line">PS&gt; .\py-scout.exe --timeout 10</p>
+            <p class="terminal-line muted">Waiting for LLDP/CDP advertisements...</p>
+            <p class="terminal-line accent">No screenshot committed yet.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Py-Scout is maintained on GitHub.</p>
+      <div class="footer-links">
+        <a href="https://github.com/scoggeshall/py-scout">Repository</a>
+        <a href="https://github.com/scoggeshall/py-scout/releases">Releases</a>
+        <a href="https://github.com/scoggeshall/py-scout/issues">Issues</a>
+      </div>
+    </footer>
+  </body>
+</html>
