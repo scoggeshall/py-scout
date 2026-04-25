@@ -11,6 +11,7 @@ from .scanner import (
     ScannerError,
     ScanResult,
     get_interface_inventory,
+    new_failure_result,
     resolve_capture_interface,
     scan_on_interface,
 )
@@ -198,12 +199,18 @@ def run_cli(argv: Sequence[str] | None = None) -> int:
         print_scan_result(result, args.json)
         return 0
     except ScannerError as exc:
+        if args.log_csv or args.log_json:
+            write_logs(args, new_failure_result(args.timeout))
+
         if args.json:
             print_json_output({"status": "error", "error": str(exc)})
         else:
             print(str(exc))
         return 1
     except KeyboardInterrupt:
+        if args.log_csv or args.log_json:
+            write_logs(args, new_failure_result(args.timeout, status="stopped"))
+
         if args.json:
             print_json_output({"status": "stopped"})
         else:

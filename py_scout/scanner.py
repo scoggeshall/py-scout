@@ -55,6 +55,25 @@ class ScanResult:
         return asdict(self)
 
 
+def new_failure_result(
+    timeout_seconds: int,
+    *,
+    status: str = "failure",
+    adapter_name: str | None = None,
+    tshark_interface_number: str | None = None,
+) -> ScanResult:
+    return ScanResult(
+        timestamp=datetime.now().astimezone().isoformat(timespec="seconds"),
+        adapter_name=adapter_name or "unknown",
+        tshark_interface_number=tshark_interface_number or "unknown",
+        protocol=None,
+        switch=None,
+        port=None,
+        status=status,
+        timeout_seconds=timeout_seconds,
+    )
+
+
 def run_cmd(args: list[str]) -> subprocess.CompletedProcess[str]:
     return subprocess.run(args, capture_output=True, text=True)
 
