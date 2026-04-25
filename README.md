@@ -1,182 +1,218 @@
 # py-scout
 
-> Plug in → run → instantly identify the switch and port for any network drop using LLDP/CDP.
+`py-scout` is a Windows-focused switchport lookup tool. It listens for LLDP and CDP advertisements with `tshark`, auto-selects a usable Ethernet adapter, and reports the first detected switch and port.
 
-Lightweight CLI tool to identify the **switch and port** a device is connected to using LLDP/CDP.
+The project keeps the capture path simple:
 
-Built on top of TShark.
-
----
-
-## Purpose
-
-Replace guesswork and physical tracing with:
-
-```text
-plug in → run tool → get switch + port
-```
-
-Works by passively listening for:
-
-- LLDP (standard)
-- CDP (Cisco)
-
----
+- Windows adapter discovery uses PowerShell `Get-NetAdapter`
+- Packet capture uses Wireshark/TShark
+- Python runtime code stays in the standard library
+- CLI and GUI both use the same scanner logic
 
 ## Requirements
 
 - Windows
-- Python 3.10+
-- Wireshark installed (provides `tshark`)
+- Python 3.10 or newer
+- Wireshark installed with `tshark` available on `PATH`
+- Python with `tkinter` included if you want to use the GUI
 
-Verify:
+Verify `tshark`:
 
 ```powershell
 tshark -v
 ```
 
----
+## Project Layout
+
+```text
+py-scout/
+|- py_scout/
+|  |- __init__.py
+|  |- scanner.py
+|  |- cli.py
+|  \- gui.py
+|- py-scout.py
+|- build.ps1
+|- requirements.txt
+|- README.md
+\- .gitignore
+```
 
 ## Installation
 
-```powershell
-cd C:\scripts
-mkdir py-scout
-cd py-scout
+Create and activate a virtual environment if you want an isolated Python install:
 
+```powershell
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-> No Python dependencies required.
+Runtime use does not require third-party Python packages. `requirements.txt` is only needed for optional executable builds.
 
----
+## CLI Usage
 
-## Usage
-
-### Auto-detect interface
+Auto-detect an active Ethernet adapter and wait up to 90 seconds:
 
 ```powershell
 py .\py-scout.py
 ```
 
-### List available interfaces
+List available `tshark` interfaces:
 
 ```powershell
 py .\py-scout.py --list
 ```
 
-### Manually specify interface
+Use a specific Windows adapter name:
 
 ```powershell
 py .\py-scout.py --interface "Ethernet"
 ```
 
-### Custom timeout
+Use a custom timeout:
 
 ```powershell
 py .\py-scout.py --timeout 60
 ```
 
----
+Show the built-in help:
+
+```powershell
+py .\py-scout.py --help
+```
+
+## JSON Output
+
+Use `--json` for machine-readable output.
+
+Scan result:
+
+```powershell
+py .\py-scout.py --json
+```
+
+Interface list:
+
+```powershell
+py .\py-scout.py --list --json
+```
+
+The JSON result includes:
+
+- `timestamp`
+- `adapter_name`
+- `tshark_interface_number`
+- `protocol`
+- `switch`
+- `port`
+- `status`
+- `timeout_seconds`
+
+## Logging
+
+Logging is optional and only records the scan result, not raw environment details.
+
+Available flags:
+
+- `--log-csv` appends results to `py-scout-log.csv`
+- `--log-json` appends results to `py-scout-log.json`
+- `--log-dir` sets the output directory and defaults to `logs`
+
+Examples:
+
+```powershell
+py .\py-scout.py --log-csv
+py .\py-scout.py --log-json
+py .\py-scout.py --log-csv --log-json --log-dir .\logs
+```
+
+Each log entry includes:
+
+- `timestamp`
+- `adapter_name`
+- `tshark_interface_number`
+- `protocol`
+- `switch`
+- `port`
+- `status`
+- `timeout_seconds`
+
+Status values include successful detections and timeout results.
+
+## GUI Usage
+
+Launch the tkinter GUI:
+
+```powershell
+py .\py-scout.py --gui
+```
+
+The GUI provides:
+
+- `Scan` to auto-select an Ethernet adapter and start a capture
+- `List Interfaces` to display available `tshark` interfaces
+- `Copy Result` to copy the current result text to the clipboard
+- An optional timeout field
+- An output area for adapter, protocol, switch, port, and scan status
+
+If the current Python installation does not include `tkinter`, the GUI command exits with a clear error message.
+
+## Executable Build
+
+Install the optional build dependency:
+
+```powershell
+py -m pip install -r requirements.txt
+```
+
+Build the executable:
+
+```powershell
+.\build.ps1
+```
+
+Expected output:
+
+```text
+dist\py-scout.exe
+```
+
+The generated executable supports both modes:
+
+```powershell
+.\dist\py-scout.exe
+.\dist\py-scout.exe --gui
+```
 
 ## How It Works
 
 1. Reads capture interfaces from `tshark -D`
-2. Filters for usable Ethernet adapters
-3. Prefers adapters with status **Up**
-4. Captures LLDP/CDP packets
-5. Parses neighbor information
-6. Returns the **first valid neighbor received**
-
-Logic:
-
-```text
-First LLDP or CDP packet → exit immediately
-```
-
----
-
-## Interface Selection Logic
-
-```text
-1. Exclude:
-   - Wi-Fi
-   - Bluetooth
-   - Loopback
-   - Virtual adapters
-   - VPN adapters
-
-2. Select:
-   - Ethernet adapters only
-
-3. Prefer:
-   - Status = Up
-
-4. Fallback:
-   - First valid Ethernet interface
-```
-
----
+2. Filters out Wi-Fi, Bluetooth, loopback, and common virtual adapters
+3. Prefers Ethernet adapters with status `Up`
+4. Captures LLDP or CDP traffic
+5. Returns the first neighbor that contains a switch or port value
 
 ## Limitations
 
-This tool depends on the switch advertising:
+- The switchport must advertise LLDP or CDP for detection to work
+- Some docks, pass-through phone ports, unmanaged switches, or filtered links may prevent discovery traffic from reaching the laptop
+- Interface matching depends on Windows adapter naming and `tshark` interface naming lining up closely
+- The tool is intentionally Windows-focused and relies on PowerShell adapter discovery
+- Building the executable requires PyInstaller
+- Using the GUI requires a Python installation that includes `tkinter`
 
-### Will NOT work if:
+## Validation
 
-- LLDP disabled
-- CDP disabled
-- Traffic filtered by:
-  - IP phones/pass-through ports
-  - unmanaged switches
-  - certain docks/adapters
-
----
-
-## Troubleshooting
-
-### No output
+Recommended validation commands:
 
 ```powershell
+python -m compileall .
 py .\py-scout.py --list
+py .\py-scout.py --help
 ```
 
-Confirm:
-
-- Correct adapter selected
-- Status = Up
-
----
-
-### Manual validation
+If you want to verify timeout handling, disconnect Ethernet or test on a network where LLDP/CDP is not being advertised and run a short timeout:
 
 ```powershell
-tshark -i <interface_number> -l -Y "lldp or cdp"
-```
-
----
-
-## Design Notes
-
-- Uses raw `tshark` for reliability
-- No external Python dependencies
-- Designed for **field use**
-
----
-
-## Future Enhancements
-
-- CSV / SQLite logging
-- JSON output mode
-- MAC address correlation
-- Multi-interface scan mode
-- Standalone executable build
-
----
-
-## Bottom Line
-
-```text
-A portable switch-port identification tool
+py .\py-scout.py --timeout 10
 ```
