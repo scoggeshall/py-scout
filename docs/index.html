@@ -15,7 +15,9 @@
       <nav class="nav" aria-label="Primary navigation">
         <a class="brand" href="#top" aria-label="Py-Scout home">Py-Scout</a>
         <div class="nav-links">
+          <a href="#downloads">Downloads</a>
           <a href="#usage">Usage</a>
+          <a href="#screenshots">Screenshots</a>
           <a href="#logging">Logging</a>
           <a href="#limits">Limitations</a>
           <a href="https://github.com/scoggeshall/py-scout">GitHub</a>
@@ -39,13 +41,48 @@
             laptop is connected to without manually building tshark commands.
           </p>
           <div class="hero-actions" aria-label="Project links">
-            <a class="button primary" href="https://github.com/scoggeshall/py-scout/releases">
+            <a class="button primary" href="https://github.com/scoggeshall/py-scout/releases/latest">
               Download latest release
             </a>
             <a class="button secondary" href="https://github.com/scoggeshall/py-scout">
               View source
             </a>
           </div>
+        </div>
+      </section>
+
+      <section class="section" id="downloads" aria-labelledby="downloads-title">
+        <div class="section-heading">
+          <p class="eyebrow">Downloads</p>
+          <h2 id="downloads-title">Get the latest Windows release.</h2>
+          <p>
+            Download the release EXE from GitHub. Double-clicking
+            <code>py-scout.exe</code> opens the GUI, while CLI mode is available
+            from PowerShell or Windows Terminal when command-line options are
+            provided.
+          </p>
+        </div>
+        <div class="download-grid">
+          <article class="card">
+            <h3>Latest release</h3>
+            <p>
+              Release assets are published on GitHub with the executable and
+              matching checksum file when available.
+            </p>
+            <p class="card-action">
+              <a href="https://github.com/scoggeshall/py-scout/releases/latest">
+                Open latest release
+              </a>
+            </p>
+          </article>
+          <article class="card">
+            <h3>Verify SHA256</h3>
+            <p>
+              Compare the local hash with the checksum published beside the
+              release asset.
+            </p>
+            <pre><code>Get-FileHash .\py-scout.exe -Algorithm SHA256</code></pre>
+          </article>
         </div>
       </section>
 
@@ -92,6 +129,12 @@
           <li>tkinter required for GUI mode</li>
           <li>PyInstaller only required for building the executable</li>
         </ul>
+        <div class="panel note">
+          <p>
+            Install Wireshark with tshark support, then confirm
+            <code>tshark -v</code> works from PowerShell before scanning.
+          </p>
+        </div>
       </section>
 
       <section class="section command-section" id="usage" aria-labelledby="cli-title">
@@ -195,9 +238,10 @@ py .\py-scout.py --gui</code></pre>
       <section class="section" aria-labelledby="release-title">
         <div class="section-heading">
           <p class="eyebrow">Release Notes</p>
-          <h2 id="release-title">Current first-version site notes.</h2>
+          <h2 id="release-title">Current v0.2.0 preparation notes.</h2>
         </div>
         <ul class="detail-list">
+          <li>Double-clicking the release EXE opens the tkinter GUI.</li>
           <li>
             <code>build.ps1</code> calls PyInstaller through the Python module
             path instead of relying on <code>pyinstaller.exe</code> being on PATH.
@@ -210,21 +254,26 @@ py .\py-scout.py --gui</code></pre>
         </ul>
       </section>
 
-      <section class="section" aria-labelledby="screenshots-title">
+      <section class="section" id="screenshots" aria-labelledby="screenshots-title">
         <div class="section-heading">
-          <p class="eyebrow">Screenshot Placeholder</p>
-          <h2 id="screenshots-title">Screenshots can be added after release assets are ready.</h2>
+          <p class="eyebrow">Screenshots</p>
+          <h2 id="screenshots-title">GUI preview area for release screenshots.</h2>
+          <p>
+            If <code>docs/screenshots/py-scout-gui.png</code> is added later,
+            this preview area will use it. Until then, the placeholder keeps the
+            page layout stable.
+          </p>
         </div>
-        <div class="screenshot-placeholder" role="img" aria-label="Placeholder for future Py-Scout screenshots">
+        <div class="screenshot-preview" role="img" aria-label="Py-Scout GUI screenshot preview or placeholder">
           <div class="placeholder-bar">
             <span></span>
             <span></span>
             <span></span>
           </div>
           <div class="placeholder-body">
-            <p class="terminal-line">PS&gt; .\py-scout.exe --timeout 10</p>
-            <p class="terminal-line muted">Waiting for LLDP/CDP advertisements...</p>
-            <p class="terminal-line accent">No screenshot committed yet.</p>
+            <p class="terminal-line">Py-Scout GUI</p>
+            <p class="terminal-line muted">Adapter | Protocol | Switch | Port | Status</p>
+            <p class="terminal-line accent">Screenshot placeholder</p>
           </div>
         </div>
       </section>

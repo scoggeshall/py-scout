@@ -211,11 +211,21 @@ h3 {
   margin-bottom: 24px;
 }
 
+.section-heading p:not(.eyebrow) {
+  margin: 12px 0 0;
+  color: var(--muted);
+}
+
 .feature-grid,
-.text-grid {
+.text-grid,
+.download-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
+}
+
+.download-grid {
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
 }
 
 .card,
@@ -237,11 +247,24 @@ h3 {
   color: var(--muted);
 }
 
+.card p + p,
+.card p + pre {
+  margin-top: 16px;
+}
+
+.card-action a {
+  font-weight: 700;
+}
+
 .split {
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
   gap: 28px;
   align-items: start;
+}
+
+.split .note {
+  grid-column: 2;
 }
 
 .check-list,
@@ -322,11 +345,15 @@ li code {
   padding: 24px;
 }
 
-.screenshot-placeholder {
+.screenshot-preview {
   overflow: hidden;
   border: 1px dashed var(--border-bright);
   border-radius: 8px;
-  background: var(--surface-strong);
+  background-color: var(--surface-strong);
+  background-image: url("screenshots/py-scout-gui.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
 .placeholder-bar {
@@ -355,7 +382,7 @@ li code {
 .placeholder-body {
   min-height: 230px;
   padding: 22px;
-  background: #070909;
+  background: rgba(7, 9, 9, 0.86);
 }
 
 .terminal-line {
@@ -424,9 +451,14 @@ li code {
 
   .feature-grid,
   .text-grid,
+  .download-grid,
   .split,
   .command-section {
     grid-template-columns: 1fr;
+  }
+
+  .split .note {
+    grid-column: auto;
   }
 }
 
