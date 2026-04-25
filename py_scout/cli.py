@@ -50,6 +50,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="List available capture interfaces and exit",
     )
     parser.add_argument(
+        "--gui",
+        action="store_true",
+        help="Launch the tkinter interface",
+    )
+    parser.add_argument(
         "--json",
         action="store_true",
         help="Print machine-readable JSON instead of human-readable output",
@@ -166,6 +171,17 @@ def run_cli(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     try:
+        if args.gui:
+            try:
+                from .gui import launch_gui
+            except ModuleNotFoundError as exc:
+                raise ScannerError(
+                    "ERROR: tkinter is not available in this Python installation."
+                ) from exc
+
+            launch_gui(default_timeout=args.timeout)
+            return 0
+
         if args.list:
             print_interface_list(args.json)
             return 0
