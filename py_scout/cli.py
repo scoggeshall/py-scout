@@ -167,20 +167,25 @@ def write_logs(args: argparse.Namespace, result: ScanResult) -> None:
         append_json_log(log_dir / "py-scout-log.json", result)
 
 
+def launch_gui_or_raise(default_timeout: int) -> None:
+    try:
+        from .gui import launch_gui
+    except ModuleNotFoundError as exc:
+        raise ScannerError(
+            "ERROR: tkinter is not available in this Python installation."
+        ) from exc
+
+    launch_gui(default_timeout=default_timeout)
+
+
 def run_cli(argv: Sequence[str] | None = None) -> int:
+    raw_args = list(sys.argv[1:] if argv is None else argv)
     parser = build_parser()
-    args = parser.parse_args(argv)
+    args = parser.parse_args(raw_args)
 
     try:
-        if args.gui:
-            try:
-                from .gui import launch_gui
-            except ModuleNotFoundError as exc:
-                raise ScannerError(
-                    "ERROR: tkinter is not available in this Python installation."
-                ) from exc
-
-            launch_gui(default_timeout=args.timeout)
+        if not raw_args or args.gui:
+            launch_gui_or_raise(default_timeout=args.timeout)
             return 0
 
         if args.list:

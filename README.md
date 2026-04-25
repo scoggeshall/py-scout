@@ -51,10 +51,13 @@ Runtime use does not require third-party Python packages. `requirements.txt` is 
 
 ## CLI Usage
 
+Launching Py-Scout with no arguments opens the GUI. To use command-line mode,
+open PowerShell or Windows Terminal and pass the desired CLI options.
+
 Auto-detect an active Ethernet adapter and wait up to 90 seconds:
 
 ```powershell
-py .\py-scout.py
+py .\py-scout.py --timeout 90
 ```
 
 List available `tshark` interfaces:
@@ -141,7 +144,13 @@ Status values include successful detections and timeout results.
 
 ## GUI Usage
 
-Launch the tkinter GUI:
+Launch the tkinter GUI from source:
+
+```powershell
+py .\py-scout.py
+```
+
+You can also request the GUI explicitly:
 
 ```powershell
 py .\py-scout.py --gui
@@ -177,11 +186,14 @@ Expected output:
 dist\py-scout.exe
 ```
 
-The generated executable supports both modes:
+Double-clicking `py-scout.exe` opens the GUI. Command-line usage still works
+from PowerShell or Windows Terminal when arguments are provided:
 
 ```powershell
 .\dist\py-scout.exe
 .\dist\py-scout.exe --gui
+.\dist\py-scout.exe --list
+.\dist\py-scout.exe --timeout 10
 ```
 
 ## How It Works
