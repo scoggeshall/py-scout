@@ -24,6 +24,7 @@ CSV_LOG_FIELDS = [
     "protocol",
     "switch",
     "port",
+    "neighbor_ip",
     "status",
     "timeout_seconds",
 ]
@@ -115,6 +116,7 @@ def print_scan_result(result: ScanResult, json_mode: bool) -> None:
         print(f"Protocol : {result.protocol or 'unknown'}")
         print(f"Switch   : {result.switch or 'unknown'}")
         print(f"Port     : {result.port or 'unknown'}")
+        print(f"Neighbor IP: {result.neighbor_ip or 'Not detected'}")
         return
 
     print("No LLDP/CDP neighbor detected (timeout reached).")

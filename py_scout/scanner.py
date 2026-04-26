@@ -19,6 +19,37 @@ BAD_INTERFACE_WORDS = (
     "etw",
 )
 
+CREATE_NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+IPV4_PATTERN = (
+    r"(?P<ip>"
+    r"(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)"
+    r"(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}"
+    r")"
+)
+MANAGEMENT_IP_PATTERNS = [
+    re.compile(
+        rf"\b(?:management|mgmt)\s+(?:address|addr|ip)\s*(?:=|:)?\s*"
+        rf"(?:IPv4\s*)?{IPV4_PATTERN}",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        rf"\bIPv4\s+(?:management\s+)?address\s*(?:=|:)?\s*{IPV4_PATTERN}",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        rf"\bIP\s+address\s*(?:=|:)?\s*(?:IPv4\s*)?{IPV4_PATTERN}",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        rf"\bAddresses\s*(?:=|:)?\s*(?:IPv4\s*)?(?:address\s*)?{IPV4_PATTERN}",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        rf"\bMA\s*(?:=|:)\s*(?:IPv4\s*)?{IPV4_PATTERN}",
+        re.IGNORECASE,
+    ),
+]
+
 
 class ScannerError(RuntimeError):
     """Raised when py-scout cannot enumerate or scan an interface."""
@@ -48,6 +79,7 @@ class ScanResult:
     protocol: str | None
     switch: str | None
     port: str | None
+    neighbor_ip: str | None
     status: str
     timeout_seconds: int
 
@@ -69,13 +101,26 @@ def new_failure_result(
         protocol=None,
         switch=None,
         port=None,
+        neighbor_ip=None,
         status=status,
         timeout_seconds=timeout_seconds,
     )
 
 
+def subprocess_options() -> dict[str, int]:
+    if CREATE_NO_WINDOW:
+        return {"creationflags": CREATE_NO_WINDOW}
+
+    return {}
+
+
 def run_cmd(args: list[str]) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(args, capture_output=True, text=True)
+    return subprocess.run(
+        args,
+        capture_output=True,
+        text=True,
+        **subprocess_options(),
+    )
 
 
 def is_bad_interface(name: str) -> bool:
@@ -238,6 +283,7 @@ def parse_neighbor(line: str) -> dict[str, str | None]:
         "protocol": None,
         "switch": None,
         "port": None,
+        "neighbor_ip": None,
         "raw": line.strip(),
     }
 
@@ -265,7 +311,19 @@ def parse_neighbor(line: str) -> dict[str, str | None]:
         if port_match:
             result["port"] = port_match.group(1).strip()
 
+    if result["protocol"]:
+        result["neighbor_ip"] = parse_neighbor_ip(line)
+
     return result
+
+
+def parse_neighbor_ip(line: str) -> str | None:
+    for pattern in MANAGEMENT_IP_PATTERNS:
+        match = pattern.search(line)
+        if match:
+            return match.group("ip")
+
+    return None
 
 
 def new_scan_result(
@@ -275,6 +333,7 @@ def new_scan_result(
     protocol: str | None = None,
     switch: str | None = None,
     port: str | None = None,
+    neighbor_ip: str | None = None,
     status: str = "timeout",
 ) -> ScanResult:
     return ScanResult(
@@ -284,6 +343,7 @@ def new_scan_result(
         protocol=protocol,
         switch=switch,
         port=port,
+        neighbor_ip=neighbor_ip,
         status=status,
         timeout_seconds=timeout_seconds,
     )
@@ -310,6 +370,7 @@ def scan_on_interface(selected: SelectedInterface, timeout_seconds: int) -> Scan
             encoding="utf-8",
             errors="replace",
             bufsize=1,
+            **subprocess_options(),
         )
     except FileNotFoundError as exc:
         raise ScannerError("ERROR: tshark not found or not working.") from exc
@@ -321,13 +382,14 @@ def scan_on_interface(selected: SelectedInterface, timeout_seconds: int) -> Scan
 
         for line in proc.stdout:
             neighbor = parse_neighbor(line)
-            if neighbor["switch"] or neighbor["port"]:
+            if neighbor["switch"] or neighbor["port"] or neighbor["neighbor_ip"]:
                 return new_scan_result(
                     selected,
                     timeout_seconds,
                     protocol=neighbor["protocol"],
                     switch=neighbor["switch"],
                     port=neighbor["port"],
+                    neighbor_ip=neighbor["neighbor_ip"],
                     status="success",
                 )
 

@@ -15,7 +15,9 @@
       <nav class="nav" aria-label="Primary navigation">
         <a class="brand" href="#top" aria-label="Py-Scout home">Py-Scout</a>
         <div class="nav-links">
+          <a href="#downloads">Downloads</a>
           <a href="#usage">Usage</a>
+          <a href="#screenshots">Screenshots</a>
           <a href="#logging">Logging</a>
           <a href="#limits">Limitations</a>
           <a href="https://github.com/scoggeshall/py-scout">GitHub</a>
@@ -35,17 +37,61 @@
           <p class="hero-copy">
             Py-Scout listens for LLDP and CDP advertisements, auto-selects a
             usable Ethernet adapter, and reports the first detected switch and
-            port. It helps network engineers identify the switchport their
-            laptop is connected to without manually building tshark commands.
+            port, plus the advertised neighbor IP address when available. It
+            helps network engineers identify the switchport their laptop is
+            connected to without manually building tshark commands.
           </p>
           <div class="hero-actions" aria-label="Project links">
-            <a class="button primary" href="https://github.com/scoggeshall/py-scout/releases">
+            <a class="button primary" href="https://github.com/scoggeshall/py-scout/releases/latest">
               Download latest release
             </a>
             <a class="button secondary" href="https://github.com/scoggeshall/py-scout">
               View source
             </a>
           </div>
+        </div>
+      </section>
+
+      <section class="section" id="downloads" aria-labelledby="downloads-title">
+        <div class="section-heading">
+          <p class="eyebrow">Downloads</p>
+          <h2 id="downloads-title">Get the latest Windows release.</h2>
+          <p>
+            Download release assets from GitHub. Double-clicking
+            <code>py-scout.exe</code> opens the GUI without a console window.
+            Use <code>py-scout-cli.exe</code> from PowerShell or Windows
+            Terminal for console output.
+          </p>
+        </div>
+        <div class="download-grid">
+          <article class="card">
+            <h3>GUI executable</h3>
+            <p>
+              <code>py-scout.exe</code> is the GUI-friendly download for
+              double-click use. It opens the tkinter interface by default.
+            </p>
+            <p class="card-action">
+              <a href="https://github.com/scoggeshall/py-scout/releases/latest">
+                Open latest release
+              </a>
+            </p>
+          </article>
+          <article class="card">
+            <h3>CLI executable</h3>
+            <p>
+              <code>py-scout-cli.exe</code> is the terminal-friendly build for
+              PowerShell or Windows Terminal command output.
+            </p>
+            <pre><code>.\py-scout-cli.exe --help</code></pre>
+          </article>
+          <article class="card">
+            <h3>Verify SHA256</h3>
+            <p>
+              Compare the local hash with the checksum published beside the
+              release asset.
+            </p>
+            <pre><code>Get-FileHash .\py-scout.exe -Algorithm SHA256</code></pre>
+          </article>
         </div>
       </section>
 
@@ -72,8 +118,9 @@
           <article class="card">
             <h3>Reports the first match</h3>
             <p>
-              Prints the detected protocol, switch, port, status, and timeout
-              details in human-readable or JSON output.
+              Prints the detected protocol, switch, port, advertised neighbor
+              IP address, status, and timeout details in human-readable or JSON
+              output.
             </p>
           </article>
         </div>
@@ -92,6 +139,12 @@
           <li>tkinter required for GUI mode</li>
           <li>PyInstaller only required for building the executable</li>
         </ul>
+        <div class="panel note">
+          <p>
+            Install Wireshark with tshark support, then confirm
+            <code>tshark -v</code> works from PowerShell before scanning.
+          </p>
+        </div>
       </section>
 
       <section class="section command-section" id="usage" aria-labelledby="cli-title">
@@ -115,16 +168,17 @@ py .\py-scout.py --gui</code></pre>
           <p class="eyebrow">EXE Usage</p>
           <h2 id="exe-title">Use the release executable for portable checks.</h2>
           <p>
-            Double-clicking <code>py-scout.exe</code> opens the GUI. CLI usage
-            still works from PowerShell or Windows Terminal when arguments are
-            provided.
+            Double-clicking <code>py-scout.exe</code> opens the GUI. Use
+            <code>py-scout-cli.exe</code> from PowerShell or Windows Terminal
+            for command-line output.
           </p>
         </div>
-        <pre><code>.\py-scout.exe --help
-.\py-scout.exe --list
-.\py-scout.exe --timeout 10
-.\py-scout.exe --json --timeout 10
-.\py-scout.exe --gui</code></pre>
+        <pre><code>.\py-scout.exe
+.\py-scout.exe --gui
+.\py-scout-cli.exe --help
+.\py-scout-cli.exe --list
+.\py-scout-cli.exe --timeout 10
+.\py-scout-cli.exe --json --timeout 10</code></pre>
       </section>
 
       <section class="section" id="logging" aria-labelledby="logging-title">
@@ -195,9 +249,15 @@ py .\py-scout.py --gui</code></pre>
       <section class="section" aria-labelledby="release-title">
         <div class="section-heading">
           <p class="eyebrow">Release Notes</p>
-          <h2 id="release-title">Current first-version site notes.</h2>
+          <h2 id="release-title">Current v0.2.0 preparation notes.</h2>
         </div>
         <ul class="detail-list">
+          <li>Double-clicking the release EXE opens the tkinter GUI.</li>
+          <li>
+            Release builds include a GUI executable and a console-friendly CLI
+            executable.
+          </li>
+          <li>Advertised LLDP/CDP neighbor IP addresses are shown when present.</li>
           <li>
             <code>build.ps1</code> calls PyInstaller through the Python module
             path instead of relying on <code>pyinstaller.exe</code> being on PATH.
@@ -210,22 +270,17 @@ py .\py-scout.py --gui</code></pre>
         </ul>
       </section>
 
-      <section class="section" aria-labelledby="screenshots-title">
+      <section class="section" id="screenshots" aria-labelledby="screenshots-title">
         <div class="section-heading">
-          <p class="eyebrow">Screenshot Placeholder</p>
-          <h2 id="screenshots-title">Screenshots can be added after release assets are ready.</h2>
+          <p class="eyebrow">Screenshots</p>
+          <h2 id="screenshots-title">Screenshots coming in v0.2.0.</h2>
+          <p>
+            Release screenshots will be added after the v0.2.0 build is final.
+            This page intentionally ships without image assets for now.
+          </p>
         </div>
-        <div class="screenshot-placeholder" role="img" aria-label="Placeholder for future Py-Scout screenshots">
-          <div class="placeholder-bar">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <div class="placeholder-body">
-            <p class="terminal-line">PS&gt; .\py-scout.exe --timeout 10</p>
-            <p class="terminal-line muted">Waiting for LLDP/CDP advertisements...</p>
-            <p class="terminal-line accent">No screenshot committed yet.</p>
-          </div>
+        <div class="placeholder-panel">
+          <p>Screenshots coming in v0.2.0</p>
         </div>
       </section>
     </main>

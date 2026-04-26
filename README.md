@@ -1,6 +1,6 @@
 # py-scout
 
-`py-scout` is a Windows-focused switchport lookup tool. It listens for LLDP and CDP advertisements with `tshark`, auto-selects a usable Ethernet adapter, and reports the first detected switch and port.
+`py-scout` is a Windows-focused switchport lookup tool. It listens for LLDP and CDP advertisements with `tshark`, auto-selects a usable Ethernet adapter, and reports the first detected switch, port, and advertised neighbor IP address when available.
 
 The project keeps the capture path simple:
 
@@ -48,6 +48,23 @@ py -m venv .venv
 ```
 
 Runtime use does not require third-party Python packages. `requirements.txt` is only needed for optional executable builds.
+
+## Download
+
+Download release builds from GitHub Releases:
+
+```text
+https://github.com/scoggeshall/py-scout/releases/latest
+```
+
+Verify a downloaded executable hash in PowerShell:
+
+```powershell
+Get-FileHash .\py-scout.exe -Algorithm SHA256
+```
+
+Published release assets should not be replaced after publishing. If the EXE
+changes, publish a new release with a new SHA256 hash.
 
 ## CLI Usage
 
@@ -108,6 +125,7 @@ The JSON result includes:
 - `protocol`
 - `switch`
 - `port`
+- `neighbor_ip`
 - `status`
 - `timeout_seconds`
 
@@ -137,6 +155,7 @@ Each log entry includes:
 - `protocol`
 - `switch`
 - `port`
+- `neighbor_ip`
 - `status`
 - `timeout_seconds`
 
@@ -162,7 +181,7 @@ The GUI provides:
 - `List Interfaces` to display available `tshark` interfaces
 - `Copy Result` to copy the current result text to the clipboard
 - An optional timeout field
-- An output area for adapter, protocol, switch, port, and scan status
+- An output area for adapter, protocol, switch, port, neighbor IP, and scan status
 
 If the current Python installation does not include `tkinter`, the GUI command exits with a clear error message.
 
@@ -184,16 +203,18 @@ Expected output:
 
 ```text
 dist\py-scout.exe
+dist\py-scout-cli.exe
 ```
 
-Double-clicking `py-scout.exe` opens the GUI. Command-line usage still works
-from PowerShell or Windows Terminal when arguments are provided:
+Double-clicking `py-scout.exe` opens the GUI without a console window. Use
+`py-scout-cli.exe` from PowerShell or Windows Terminal for console output:
 
 ```powershell
 .\dist\py-scout.exe
 .\dist\py-scout.exe --gui
-.\dist\py-scout.exe --list
-.\dist\py-scout.exe --timeout 10
+.\dist\py-scout-cli.exe --list
+.\dist\py-scout-cli.exe --timeout 10
+.\dist\py-scout-cli.exe --json --timeout 10
 ```
 
 ## How It Works
@@ -202,7 +223,7 @@ from PowerShell or Windows Terminal when arguments are provided:
 2. Filters out Wi-Fi, Bluetooth, loopback, and common virtual adapters
 3. Prefers Ethernet adapters with status `Up`
 4. Captures LLDP or CDP traffic
-5. Returns the first neighbor that contains a switch or port value
+5. Returns the first neighbor that contains a switch, port, or advertised neighbor IP value
 
 ## Limitations
 
