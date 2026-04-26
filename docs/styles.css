@@ -1,18 +1,18 @@
 :root {
   color-scheme: dark;
-  --bg: #0d0f10;
-  --surface: #151819;
-  --surface-strong: #1c2122;
-  --border: #344044;
-  --border-bright: #587177;
-  --text: #eef5f1;
-  --muted: #b8c7c3;
-  --subtle: #8ea19c;
-  --accent: #58d68d;
-  --accent-strong: #8df0b7;
-  --cyan: #6ccff6;
-  --amber: #f0b35b;
-  --shadow: rgba(0, 0, 0, 0.3);
+  --bg: #07111f;
+  --surface: #0d1c31;
+  --surface-strong: #132945;
+  --border: #274765;
+  --border-bright: #2f8cff;
+  --text: #f7fbff;
+  --muted: #c8d7e8;
+  --subtle: #8fa9c4;
+  --accent: #2f8cff;
+  --accent-strong: #74bdff;
+  --cyan: #4cc9ff;
+  --amber: #ffd35a;
+  --shadow: rgba(0, 0, 0, 0.36);
   --max-width: 1120px;
 }
 
@@ -35,7 +35,7 @@ body {
 
 a {
   color: var(--accent-strong);
-  text-decoration-color: rgba(141, 240, 183, 0.55);
+  text-decoration-color: rgba(116, 189, 255, 0.58);
   text-underline-offset: 0.18em;
 }
 
@@ -49,7 +49,7 @@ a:focus-visible {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: rgba(13, 15, 16, 0.94);
+  background: rgba(7, 17, 31, 0.94);
   border-bottom: 1px solid var(--border);
 }
 
@@ -91,18 +91,49 @@ a:focus-visible {
 
 .hero {
   border-bottom: 1px solid var(--border);
-  background: #101314;
+  background: #09172a;
 }
 
 .hero-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+  align-items: center;
+  gap: 48px;
   width: min(100% - 32px, var(--max-width));
   margin: 0 auto;
-  padding: 80px 0 72px;
+  padding: 72px 0 64px;
+}
+
+.hero-copy-block {
+  min-width: 0;
+}
+
+.hero-logo-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: end;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 24px;
+  border: 1px solid rgba(116, 189, 255, 0.3);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 22px 44px var(--shadow);
+}
+
+.hero-logo {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  object-fit: contain;
 }
 
 .eyebrow {
   margin: 0 0 10px;
-  color: var(--accent-strong);
+  color: var(--amber);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.11em;
@@ -178,12 +209,13 @@ h3 {
 .button.primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: #06210f;
+  color: #03101f;
 }
 
 .button.secondary {
   background: transparent;
   color: var(--text);
+  border-color: rgba(255, 211, 90, 0.68);
 }
 
 .button:hover,
@@ -193,7 +225,8 @@ h3 {
 
 .button.primary:hover,
 .button.primary:focus-visible {
-  color: #041a0b;
+  color: #03101f;
+  background: var(--accent-strong);
 }
 
 .section {
@@ -203,7 +236,7 @@ h3 {
 }
 
 .section + .section {
-  border-top: 1px solid rgba(88, 113, 119, 0.32);
+  border-top: 1px solid rgba(116, 189, 255, 0.18);
 }
 
 .section-heading {
@@ -315,8 +348,8 @@ pre {
   overflow-x: auto;
   border: 1px solid var(--border-bright);
   border-radius: 8px;
-  background: #070909;
-  color: #e9fff0;
+  background: #03101f;
+  color: #f7fbff;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
@@ -335,9 +368,9 @@ pre code {
 p code,
 li code {
   padding: 0.12em 0.32em;
-  border: 1px solid rgba(108, 207, 246, 0.28);
+  border: 1px solid rgba(76, 201, 255, 0.28);
   border-radius: 4px;
-  background: rgba(108, 207, 246, 0.08);
+  background: rgba(76, 201, 255, 0.08);
   color: #dff8ff;
 }
 
@@ -395,7 +428,14 @@ li code {
   }
 
   .hero-content {
+    grid-template-columns: 1fr;
     padding: 56px 0 52px;
+  }
+
+  .hero-logo-panel {
+    order: -1;
+    justify-self: center;
+    max-width: 520px;
   }
 
   h1 {
