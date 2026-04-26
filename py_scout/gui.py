@@ -32,6 +32,7 @@ class ScoutGui:
         self.protocol_var = tk.StringVar(value="Not scanned")
         self.switch_var = tk.StringVar(value="Not scanned")
         self.port_var = tk.StringVar(value="Not scanned")
+        self.neighbor_ip_var = tk.StringVar(value="Not scanned")
         self.result_status_var = tk.StringVar(value="Not scanned")
 
         self._configure_style()
@@ -155,24 +156,32 @@ class ScoutGui:
         )
         results.grid(row=1, column=0, sticky="ew", pady=(14, 14))
 
-        for column in range(5):
+        for column in range(3):
             results.columnconfigure(column, weight=1, uniform="result")
 
-        self._add_result_field(results, 0, "Adapter", self.adapter_var)
-        self._add_result_field(results, 1, "Protocol", self.protocol_var)
-        self._add_result_field(results, 2, "Switch", self.switch_var)
-        self._add_result_field(results, 3, "Port", self.port_var)
-        self._add_result_field(results, 4, "Status", self.result_status_var)
+        self._add_result_field(results, 0, 0, "Adapter", self.adapter_var)
+        self._add_result_field(results, 0, 1, "Protocol", self.protocol_var)
+        self._add_result_field(results, 0, 2, "Switch", self.switch_var)
+        self._add_result_field(results, 1, 0, "Port", self.port_var)
+        self._add_result_field(results, 1, 1, "Neighbor IP", self.neighbor_ip_var)
+        self._add_result_field(results, 1, 2, "Status", self.result_status_var)
 
     def _add_result_field(
         self,
         parent: ttk.Frame,
+        row: int,
         column: int,
         label: str,
         variable: tk.StringVar,
     ) -> None:
         frame = ttk.Frame(parent)
-        frame.grid(row=0, column=column, sticky="nsew", padx=(0 if column == 0 else 12, 0))
+        frame.grid(
+            row=row,
+            column=column,
+            sticky="nsew",
+            padx=(0 if column == 0 else 12, 0),
+            pady=(0 if row == 0 else 12, 0),
+        )
         ttk.Label(frame, text=label, style="Muted.TLabel").grid(row=0, column=0, sticky="w")
         ttk.Label(frame, textvariable=variable, style="Value.TLabel", wraplength=135).grid(
             row=1,
@@ -335,11 +344,13 @@ class ScoutGui:
         protocol = result.protocol or "Not detected"
         switch = result.switch or "Not detected"
         port = result.port or "Not detected"
+        neighbor_ip = result.neighbor_ip or "Not detected"
 
         self.adapter_var.set(result.adapter_name)
         self.protocol_var.set(protocol)
         self.switch_var.set(switch)
         self.port_var.set(port)
+        self.neighbor_ip_var.set(neighbor_ip)
         self.result_status_var.set(result.status)
 
         lines = [
@@ -349,6 +360,7 @@ class ScoutGui:
             f"Protocol: {protocol}",
             f"Switch  : {switch}",
             f"Port    : {port}",
+            f"Neighbor IP: {neighbor_ip}",
             f"Status  : {result.status}",
             f"Timeout : {result.timeout_seconds} seconds",
         ]
