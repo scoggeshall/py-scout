@@ -4,34 +4,25 @@ $ErrorActionPreference = "Stop"
 Push-Location $PSScriptRoot
 
 try {
-    Write-Host "Building GUI executable: dist\py-scout.exe"
-
-    py -m PyInstaller `
-        --onefile `
-        --name py-scout `
-        --windowed `
-        --clean `
-        py-scout.py
-
-    if ($LASTEXITCODE -ne 0) {
-        throw "GUI PyInstaller build failed with exit code $LASTEXITCODE."
+    foreach ($path in @(".\build", ".\dist")) {
+        if (Test-Path $path) {
+            Remove-Item -LiteralPath $path -Recurse -Force
+        }
     }
 
-    Write-Host "Building CLI executable: dist\py-scout-cli.exe"
+    Write-Host "Building single executable: dist\pyscout.exe"
 
     py -m PyInstaller `
-        --onefile `
-        --name py-scout-cli `
         --clean `
-        py-scout.py
+        --noconfirm `
+        .\pyscout.spec
 
     if ($LASTEXITCODE -ne 0) {
-        throw "CLI PyInstaller build failed with exit code $LASTEXITCODE."
+        throw "PyInstaller build failed with exit code $LASTEXITCODE."
     }
 
     Write-Host "Build complete:"
-    Write-Host "  dist\py-scout.exe"
-    Write-Host "  dist\py-scout-cli.exe"
+    Write-Host "  dist\pyscout.exe"
 }
 finally {
     Pop-Location

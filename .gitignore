@@ -3,5 +3,8 @@ __pycache__/
 *.pyc
 build/
 dist/
+.pytest_cache/
+*.spec~
 *.spec
+!pyscout.spec
 logs/

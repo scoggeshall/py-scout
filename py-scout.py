@@ -1,5 +1,5 @@
 import sys
-from py_scout.cli import main
+from pyscout.__main__ import main
 
 
 if __name__ == "__main__":
