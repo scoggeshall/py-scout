@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="Py-Scout finds the switch and port you're plugged into using LLDP/CDP."
+      content="Py-Scout is a Windows switchport discovery and mapping tool for network engineers."
     >
-    <title>Py-Scout | Find Your Switch Port Instantly</title>
+    <title>Py-Scout | Switchport Discovery for Network Engineers</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -17,7 +17,7 @@
         <div class="nav-links">
           <a href="#workflow">Workflow</a>
           <a href="#features">Features</a>
-          <a href="#protocols">Protocols</a>
+          <a href="#mapping">Mapping</a>
           <a href="#requirements">Requirements</a>
           <a href="#build">Build</a>
           <a href="https://github.com/scoggeshall/py-scout">GitHub</a>
@@ -29,14 +29,15 @@
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-content">
           <div class="hero-copy-block">
-            <p class="eyebrow">Switchport discovery</p>
-            <h1 id="hero-title">Find your switch port instantly</h1>
+            <p class="eyebrow">Network field tool</p>
+            <h1 id="hero-title">Know the switchport before you leave the closet.</h1>
             <p class="hero-lead">
-              Plug in, run Py-Scout, and immediately see the switch and port
-              using LLDP/CDP.
+              Py-Scout is a Windows desktop tool for discovering the switch, port,
+              neighbor address, and protocol seen from the jack you are plugged into.
             </p>
             <p class="hero-copy">
-              <strong>No tshark. No guesswork.</strong>
+              Built for network engineers doing physical mapping, closet cleanup,
+              drop validation, and field troubleshooting.
             </p>
             <div class="hero-actions" aria-label="Project links">
               <a class="button primary" href="https://github.com/scoggeshall/py-scout/releases/latest">
@@ -51,59 +52,104 @@
             <img
               class="hero-logo"
               src="assets/pyscout.png"
-              alt="Py-Scout mascot artwork"
+              alt="Py-Scout app icon"
             >
           </figure>
         </div>
       </section>
 
-      <section class="section" id="workflow" aria-labelledby="workflow-title">
+      <section class="section compact-section" id="workflow" aria-labelledby="workflow-title">
         <div class="section-heading">
           <p class="eyebrow">Workflow</p>
-          <h2 id="workflow-title">How it works</h2>
+          <h2 id="workflow-title">Plug in. Discover. Save the mapping.</h2>
         </div>
-        <ul class="check-list">
-          <li>Plug into a network jack</li>
-          <li>Run discovery</li>
-          <li>See switch + port instantly</li>
-          <li>Save mapping if needed</li>
-        </ul>
+        <div class="step-grid">
+          <article class="step-card">
+            <span class="step-number">01</span>
+            <h3>Connect</h3>
+            <p>Plug your laptop into the wall jack, patch cable, or switchport being traced.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-number">02</span>
+            <h3>Run discovery</h3>
+            <p>Py-Scout listens for neighbor discovery frames and normalizes the useful fields.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-number">03</span>
+            <h3>Document</h3>
+            <p>Save the result with location, wall jack, patch panel, or field notes.</p>
+          </article>
+        </div>
       </section>
 
       <section class="section" id="features" aria-labelledby="features-title">
         <div class="section-heading">
-          <p class="eyebrow">Value</p>
-          <h2 id="features-title">What you get</h2>
+          <p class="eyebrow">Why it exists</p>
+          <h2 id="features-title">A practical mapping tool, not a packet viewer.</h2>
+          <p>
+            Py-Scout keeps the field workflow simple: identify the upstream switchport,
+            capture the result, and build a clean record you can use later.
+          </p>
         </div>
-        <ul class="detail-list">
-          <li>LLDP + CDP switchport discovery</li>
-          <li>Readable output (no packet dumps)</li>
-          <li>Single Windows executable</li>
-          <li>Table-based mapping system</li>
-          <li>Manual or Auto Save</li>
-        </ul>
+        <div class="feature-grid">
+          <article class="card">
+            <h3>Switchport discovery</h3>
+            <p>Find the advertised switch, interface, management address, and discovery protocol.</p>
+          </article>
+          <article class="card">
+            <h3>Readable results</h3>
+            <p>Shows the fields an engineer needs without forcing you to inspect raw frames.</p>
+          </article>
+          <article class="card">
+            <h3>Persistent mapping</h3>
+            <p>Keep a local table of known ports, locations, and notes for repeatable documentation.</p>
+          </article>
+          <article class="card">
+            <h3>Windows-first GUI</h3>
+            <p>Designed around a desktop workflow instead of a pile of one-off terminal commands.</p>
+          </article>
+          <article class="card">
+            <h3>Field-friendly output</h3>
+            <p>Useful during closet work, jack validation, refresh projects, and troubleshooting calls.</p>
+          </article>
+          <article class="card">
+            <h3>Engineer-owned</h3>
+            <p>Small, inspectable, and built for real network operations instead of generic inventory.</p>
+          </article>
+        </div>
       </section>
 
       <section class="section command-section" id="example" aria-labelledby="example-title">
         <div class="section-heading">
-          <p class="eyebrow">Result</p>
-          <h2 id="example-title">Example output</h2>
+          <p class="eyebrow">Example</p>
+          <h2 id="example-title">The kind of output you actually need.</h2>
         </div>
         <pre><code>Switch: MDF-SW01
 Port: Gi1/0/24
-IP: 10.16.1.45
-Protocol: CDP</code></pre>
+Neighbor IP: 10.16.1.45
+Protocol: CDP
+Location: Main Library / 2nd Floor
+Jack: 2A-114
+Patch Panel: PP-03 / Port 24
+Note: Public workstation drop</code></pre>
       </section>
 
-      <section class="section" id="protocols" aria-labelledby="protocols-title">
+      <section class="section split-section" id="mapping" aria-labelledby="mapping-title">
         <div class="section-heading">
-          <p class="eyebrow">Discovery</p>
-          <h2 id="protocols-title">Protocols</h2>
-          <p>Py-Scout supports:</p>
+          <p class="eyebrow">Mapping</p>
+          <h2 id="mapping-title">Built for the part most tools ignore.</h2>
+          <p>
+            Discovery is only step one. The real value is turning a live switchport
+            result into a persistent physical map.
+          </p>
         </div>
-        <ul class="check-list">
-          <li>LLDP</li>
-          <li>CDP</li>
+        <ul class="detail-list">
+          <li>Switch and interface</li>
+          <li>Protocol seen from the drop</li>
+          <li>Neighbor management address</li>
+          <li>Wall jack or room location</li>
+          <li>Patch panel reference</li>
+          <li>Notes for cleanup or follow-up work</li>
         </ul>
       </section>
 
@@ -112,16 +158,18 @@ Protocol: CDP</code></pre>
           <p class="eyebrow">Install</p>
           <h2 id="requirements-title">Requirements</h2>
         </div>
-        <ul class="check-list">
+        <ul class="check-list two-column-list">
           <li>Windows</li>
-          <li>Npcap (for packet capture)</li>
+          <li>Npcap</li>
+          <li>Network interface connected to the target drop</li>
+          <li>LLDP or CDP enabled on the upstream switch</li>
         </ul>
       </section>
 
       <section class="section command-section" id="build" aria-labelledby="build-title">
         <div class="section-heading">
           <p class="eyebrow">Source</p>
-          <h2 id="build-title">Build</h2>
+          <h2 id="build-title">Build from source</h2>
         </div>
         <pre><code>python -m unittest discover
 python -m compileall pyscout
