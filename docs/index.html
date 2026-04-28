@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="Py-Scout is a GUI-first switchport discovery and physical mapping tool for network engineers."
+      content="Py-Scout finds the switch and port you're plugged into using LLDP/CDP."
     >
-    <title>Py-Scout | Switchport Discovery + Physical Mapping</title>
+    <title>Py-Scout | Find Your Switch Port Instantly</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -29,15 +29,14 @@
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-content">
           <div class="hero-copy-block">
-            <p class="eyebrow">Network field mapping</p>
-            <h1 id="hero-title">Py-Scout</h1>
+            <p class="eyebrow">Switchport discovery</p>
+            <h1 id="hero-title">Find your switch port instantly</h1>
             <p class="hero-lead">
-              A GUI-first switchport discovery and physical mapping tool for
-              network engineers.
+              Plug in, run Py-Scout, and immediately see the switch and port
+              using LLDP/CDP.
             </p>
             <p class="hero-copy">
-              Plug in, run Scapy-powered LLDP/CDP discovery, see the connected
-              switch and port, then save the physical mapping to SQLite.
+              <strong>No tshark. No guesswork. Just the answer.</strong>
             </p>
             <div class="hero-actions" aria-label="Project links">
               <a class="button primary" href="https://github.com/scoggeshall/py-scout/releases/latest">
@@ -60,139 +59,72 @@
 
       <section class="section" id="workflow" aria-labelledby="workflow-title">
         <div class="section-heading">
-          <p class="eyebrow">Core Workflow</p>
-          <h2 id="workflow-title">Plug in. Discover. Map. Done.</h2>
-          <p>
-            Py-Scout is intentionally focused on one field workflow: identify
-            the switchport a machine is connected to and preserve the physical
-            mapping record.
-          </p>
+          <p class="eyebrow">Workflow</p>
+          <h2 id="workflow-title">How it works</h2>
         </div>
-        <div class="feature-grid">
-          <article class="card">
-            <h3>Run Discovery</h3>
-            <p>
-              Select or auto-detect a capture adapter and listen for LLDP/CDP
-              neighbor advertisements with Scapy.
-            </p>
-          </article>
-          <article class="card">
-            <h3>Review Results</h3>
-            <p>
-              See the switch name, switch port, neighbor IP, protocol, and
-              discovery timestamp in a clean desktop interface.
-            </p>
-          </article>
-          <article class="card">
-            <h3>Save Mapping</h3>
-            <p>
-              Store site, building, room, wall jack, patch panel, switch, port,
-              host details, and notes in SQLite.
-            </p>
-          </article>
-        </div>
+        <ul class="check-list">
+          <li>Plug into a network jack</li>
+          <li>Run discovery</li>
+          <li>See switch + port instantly</li>
+          <li>Save mapping if needed</li>
+        </ul>
       </section>
 
       <section class="section" id="features" aria-labelledby="features-title">
         <div class="section-heading">
-          <p class="eyebrow">Active Product</p>
-          <h2 id="features-title">Focused on discovery and physical mapping.</h2>
+          <p class="eyebrow">Value</p>
+          <h2 id="features-title">What you get</h2>
         </div>
         <ul class="detail-list">
-          <li>Modern PySide6 desktop GUI with Discovery and Mapper tabs.</li>
-          <li>Scapy-based LLDP/CDP discovery and adapter auto-selection.</li>
-          <li>SQLite-backed mapper records with table-first editing and delete.</li>
-          <li>Single windowed Windows executable: <code>dist\pyscout.exe</code>.</li>
+          <li>LLDP + CDP switchport discovery</li>
+          <li>Readable output (no packet dumps)</li>
+          <li>Single Windows executable</li>
+          <li>Table-based mapping system</li>
+          <li>Manual or Auto Save</li>
         </ul>
+      </section>
+
+      <section class="section command-section" id="example" aria-labelledby="example-title">
+        <div class="section-heading">
+          <p class="eyebrow">Result</p>
+          <h2 id="example-title">Example output</h2>
+        </div>
+        <pre><code>Switch: MDF-SW01
+Port: Gi1/0/24
+IP: 10.16.1.45
+Protocol: CDP</code></pre>
       </section>
 
       <section class="section" id="protocols" aria-labelledby="protocols-title">
         <div class="section-heading">
-          <p class="eyebrow">Supported Discovery Protocols</p>
-          <h2 id="protocols-title">LLDP and CDP are both supported.</h2>
-          <p>
-            Py-Scout owns the capture and parsing pipeline directly with Scapy,
-            then normalizes the result into switch, port, neighbor IP, protocol,
-            timestamp, and backend fields.
-          </p>
-          <p>
-            The Discovery tab can listen for both protocols, LLDP only, or CDP
-            only.
-          </p>
+          <p class="eyebrow">Discovery</p>
+          <h2 id="protocols-title">Protocols</h2>
+          <p>Py-Scout supports:</p>
         </div>
-        <div class="feature-grid">
-          <article class="card">
-            <h3>LLDP</h3>
-            <p>
-              Parses standard LLDP TLVs for system name, port identity or
-              description, and IPv4 management address.
-            </p>
-          </article>
-          <article class="card">
-            <h3>CDP</h3>
-            <p>
-              Detects Cisco LLC/SNAP CDP frames and parses device ID, port ID,
-              IPv4 address, capabilities, software version, and platform.
-            </p>
-          </article>
-        </div>
+        <ul class="check-list">
+          <li>LLDP</li>
+          <li>CDP</li>
+        </ul>
       </section>
 
-      <section class="section" id="capture" aria-labelledby="capture-title">
+      <section class="section" id="requirements" aria-labelledby="requirements-title">
         <div class="section-heading">
-          <p class="eyebrow">Packet Capture Requirement</p>
-          <h2 id="capture-title">Windows capture requires Npcap.</h2>
-          <p>
-            Scapy handles discovery inside Py-Scout, but Windows still needs
-            Npcap or compatible packet capture support installed for live
-            captures.
-          </p>
-        </div>
-        <div class="feature-grid">
-          <article class="card">
-            <h3>Clean Errors</h3>
-            <p>
-              Missing packet capture support is reported as a clear Npcap
-              requirement instead of a Python traceback.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section class="section split" id="requirements" aria-labelledby="requirements-title">
-        <div class="section-heading">
-          <p class="eyebrow">Requirements</p>
-          <h2 id="requirements-title">Built for Windows field use.</h2>
+          <p class="eyebrow">Install</p>
+          <h2 id="requirements-title">Requirements</h2>
         </div>
         <ul class="check-list">
           <li>Windows</li>
-          <li>Npcap or compatible packet capture support</li>
-          <li>Python 3.10 or newer for source development</li>
-          <li>PySide6 for source GUI runs</li>
-          <li>PyInstaller for executable builds</li>
+          <li>Npcap (for packet capture)</li>
         </ul>
-        <div class="panel note">
-          <p>
-            Discovery depends on LLDP or CDP advertisements reaching the local
-            adapter. Some docks, phones, unmanaged switches, or filtered links
-            may block discovery traffic.
-          </p>
-        </div>
       </section>
 
       <section class="section command-section" id="build" aria-labelledby="build-title">
         <div class="section-heading">
-          <p class="eyebrow">Build</p>
-          <h2 id="build-title">Create the GUI executable from source.</h2>
-          <p>
-            The packaged app is GUI-first. Source CLI support is intentionally
-            minimal and kept for development checks only.
-          </p>
+          <p class="eyebrow">Source</p>
+          <h2 id="build-title">Build</h2>
         </div>
         <pre><code>python -m unittest discover
 python -m compileall pyscout
-python -m pyscout --help
-python -m pyscout version
 .\build.ps1
 .\dist\pyscout.exe</code></pre>
       </section>
