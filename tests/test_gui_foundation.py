@@ -75,20 +75,100 @@ class GuiFoundationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             database_path = str(Path(tmpdir) / "pyscout.db")
             with patch.dict("os.environ", {DEFAULT_DATABASE_ENV: database_path}):
-                window = MainWindow()
+                with patch(
+                    "pyscout.gui.tabs.discovery_tab.list_capture_adapters",
+                    return_value=[],
+                ):
+                    window = MainWindow()
 
-                try:
-                    tab_names = [
-                        window.tabs.tabText(index)
-                        for index in range(window.tabs.count())
-                    ]
-                finally:
-                    window.close()
+                    try:
+                        tab_names = [
+                            window.tabs.tabText(index)
+                            for index in range(window.tabs.count())
+                        ]
+                    finally:
+                        window.close()
 
         self.assertEqual(tab_names, ["Discovery", "Mapper"])
         self.assertNotIn("Scanner", tab_names)
         self.assertNotIn("Subnet", tab_names)
         self.assertNotIn("Tools", tab_names)
+
+    @unittest.skipIf(QApplication is None, "PySide6 is not installed")
+    def test_manual_save_record_refreshes_mapper_without_switching_tabs(self) -> None:
+        from pyscout.gui.main_window import MainWindow
+
+        app = QApplication.instance() or QApplication([])
+        with tempfile.TemporaryDirectory() as tmpdir:
+            database_path = str(Path(tmpdir) / "pyscout.db")
+            with patch.dict("os.environ", {DEFAULT_DATABASE_ENV: database_path}):
+                with patch(
+                    "pyscout.gui.tabs.discovery_tab.list_capture_adapters",
+                    return_value=[],
+                ):
+                    window = MainWindow()
+
+                    try:
+                        window.tabs.setCurrentWidget(window.discovery_tab)
+                        window.discovery_tab.show_result(
+                            {
+                                "status": "success",
+                                "switch_name": "sw-1",
+                                "switch_port": "Gi1/0/24",
+                                "neighbor_ip": "10.0.0.1",
+                                "protocol": "LLDP",
+                                "backend": "scapy",
+                            }
+                        )
+                        window.discovery_tab.save_to_mapper()
+                        app.processEvents()
+
+                        self.assertIs(window.tabs.currentWidget(), window.discovery_tab)
+                        self.assertEqual(window.mapper_tab.records_table.rowCount(), 1)
+                        self.assertEqual(
+                            window.statusBar().currentMessage(),
+                            "Record saved.",
+                        )
+                    finally:
+                        window.close()
+
+    @unittest.skipIf(QApplication is None, "PySide6 is not installed")
+    def test_auto_save_refreshes_mapper_without_switching_tabs(self) -> None:
+        from pyscout.gui.main_window import MainWindow
+
+        app = QApplication.instance() or QApplication([])
+        with tempfile.TemporaryDirectory() as tmpdir:
+            database_path = str(Path(tmpdir) / "pyscout.db")
+            with patch.dict("os.environ", {DEFAULT_DATABASE_ENV: database_path}):
+                with patch(
+                    "pyscout.gui.tabs.discovery_tab.list_capture_adapters",
+                    return_value=[],
+                ):
+                    window = MainWindow()
+
+                    try:
+                        window.tabs.setCurrentWidget(window.discovery_tab)
+                        window.discovery_tab.auto_save_checkbox.setChecked(True)
+                        window.discovery_tab.show_result(
+                            {
+                                "status": "success",
+                                "switch_name": "sw-1",
+                                "switch_port": "Gi1/0/24",
+                                "neighbor_ip": "10.0.0.1",
+                                "protocol": "CDP",
+                                "backend": "scapy",
+                            }
+                        )
+                        app.processEvents()
+
+                        self.assertIs(window.tabs.currentWidget(), window.discovery_tab)
+                        self.assertEqual(window.mapper_tab.records_table.rowCount(), 1)
+                        self.assertEqual(
+                            window.statusBar().currentMessage(),
+                            "Completed (Scapy) — record auto-saved.",
+                        )
+                    finally:
+                        window.close()
 
 
 if __name__ == "__main__":

@@ -17,6 +17,7 @@
         <div class="nav-links">
           <a href="#workflow">Workflow</a>
           <a href="#features">Features</a>
+          <a href="#protocols">Protocols</a>
           <a href="#requirements">Requirements</a>
           <a href="#build">Build</a>
           <a href="https://github.com/scoggeshall/py-scout">GitHub</a>
@@ -35,7 +36,7 @@
               network engineers.
             </p>
             <p class="hero-copy">
-              Plug in, run LLDP/CDP discovery with TShark, see the connected
+              Plug in, run Scapy-powered LLDP/CDP discovery, see the connected
               switch and port, then save the physical mapping to SQLite.
             </p>
             <div class="hero-actions" aria-label="Project links">
@@ -72,7 +73,7 @@
             <h3>Run Discovery</h3>
             <p>
               Select or auto-detect a capture adapter and listen for LLDP/CDP
-              neighbor advertisements with TShark.
+              neighbor advertisements with Scapy.
             </p>
           </article>
           <article class="card">
@@ -99,10 +100,63 @@
         </div>
         <ul class="detail-list">
           <li>Modern PySide6 desktop GUI with Discovery and Mapper tabs.</li>
-          <li>TShark-based LLDP/CDP discovery and adapter auto-selection.</li>
-          <li>SQLite-backed mapper records with create, update, and delete.</li>
+          <li>Scapy-based LLDP/CDP discovery and adapter auto-selection.</li>
+          <li>SQLite-backed mapper records with table-first editing and delete.</li>
           <li>Single windowed Windows executable: <code>dist\pyscout.exe</code>.</li>
         </ul>
+      </section>
+
+      <section class="section" id="protocols" aria-labelledby="protocols-title">
+        <div class="section-heading">
+          <p class="eyebrow">Supported Discovery Protocols</p>
+          <h2 id="protocols-title">LLDP and CDP are both supported.</h2>
+          <p>
+            Py-Scout owns the capture and parsing pipeline directly with Scapy,
+            then normalizes the result into switch, port, neighbor IP, protocol,
+            timestamp, and backend fields.
+          </p>
+          <p>
+            The Discovery tab can listen for both protocols, LLDP only, or CDP
+            only.
+          </p>
+        </div>
+        <div class="feature-grid">
+          <article class="card">
+            <h3>LLDP</h3>
+            <p>
+              Parses standard LLDP TLVs for system name, port identity or
+              description, and IPv4 management address.
+            </p>
+          </article>
+          <article class="card">
+            <h3>CDP</h3>
+            <p>
+              Detects Cisco LLC/SNAP CDP frames and parses device ID, port ID,
+              IPv4 address, capabilities, software version, and platform.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="capture" aria-labelledby="capture-title">
+        <div class="section-heading">
+          <p class="eyebrow">Packet Capture Requirement</p>
+          <h2 id="capture-title">Windows capture requires Npcap.</h2>
+          <p>
+            Scapy handles discovery inside Py-Scout, but Windows still needs
+            Npcap or compatible packet capture support installed for live
+            captures.
+          </p>
+        </div>
+        <div class="feature-grid">
+          <article class="card">
+            <h3>Clean Errors</h3>
+            <p>
+              Missing packet capture support is reported as a clear Npcap
+              requirement instead of a Python traceback.
+            </p>
+          </article>
+        </div>
       </section>
 
       <section class="section split" id="requirements" aria-labelledby="requirements-title">
@@ -112,8 +166,7 @@
         </div>
         <ul class="check-list">
           <li>Windows</li>
-          <li>Wireshark/TShark available on PATH</li>
-          <li>Npcap/Wireshark capture support</li>
+          <li>Npcap or compatible packet capture support</li>
           <li>Python 3.10 or newer for source development</li>
           <li>PySide6 for source GUI runs</li>
           <li>PyInstaller for executable builds</li>

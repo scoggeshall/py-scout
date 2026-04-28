@@ -18,8 +18,7 @@ The packaged desktop app launches directly into the PySide6 interface:
 
 - Windows
 - Python 3.10 or newer for source/dev use
-- Wireshark/TShark for LLDP/CDP discovery
-- Npcap/Wireshark capture support
+- Npcap or compatible packet capture support
 - Python dependencies from `requirements.txt`
 
 Install dependencies:
@@ -84,9 +83,20 @@ python -m pyscout
 ## Active Features
 
 - PySide6 main window with Discovery and Mapper tabs
-- TShark-based LLDP/CDP adapter discovery and packet parsing
-- Mapper records persisted to SQLite
+- Scapy-based LLDP/CDP discovery
+- Table-first Mapper records persisted to SQLite
 - GUI-first PyInstaller build producing `dist/pyscout.exe`
+
+## Discovery
+
+Py-Scout captures and parses discovery packets directly with Scapy:
+
+- LLDP
+- CDP
+
+The Discovery tab can listen for both protocols, LLDP only, or CDP only.
+
+Windows packet capture requires Npcap. If Scapy cannot capture because Npcap/libpcap is missing, Py-Scout reports that clearly instead of showing a Python traceback.
 
 ## Validation
 
