@@ -8,21 +8,6 @@ from pyscout.core.models import MAPPER_FIELDS
 from pyscout.storage.sqlite_store import SQLiteStore
 
 
-FORM_FIELDS = (
-    ("site", "Site"),
-    ("building", "Building"),
-    ("floor", "Floor"),
-    ("room", "Room"),
-    ("wall_jack", "Wall Jack"),
-    ("patch_panel", "Patch Panel"),
-    ("switch", "Switch"),
-    ("switch_port", "Port"),
-    ("mac", "MAC"),
-    ("vendor", "Vendor"),
-    ("hostname", "Hostname"),
-    ("neighbor_ip", "Neighbor IP"),
-    ("note", "Note"),
-)
 TABLE_FIELDS = ("id", *MAPPER_FIELDS)
 TABLE_HEADERS = (
     "ID",
@@ -41,17 +26,29 @@ TABLE_HEADERS = (
     "Note",
     "Timestamp",
 )
+EDITABLE_TABLE_FIELDS = (
+    "site",
+    "building",
+    "floor",
+    "room",
+    "wall_jack",
+    "patch_panel",
+    "switch",
+    "switch_port",
+    "neighbor_ip",
+    "note",
+)
+HIDDEN_TABLE_FIELDS = ("mac", "vendor", "hostname")
 
 
 try:
-    from PySide6.QtCore import Qt
+    from PySide6.QtCore import QEvent, Qt
     from PySide6.QtWidgets import (
         QAbstractItemView,
-        QGridLayout,
         QGroupBox,
+        QHBoxLayout,
         QHeaderView,
         QLabel,
-        QLineEdit,
         QMessageBox,
         QPushButton,
         QTableWidget,
@@ -77,29 +74,26 @@ else:
             super().__init__()
             self.service = MapperService(store)
             self.status_callback = status_callback
-            self.inputs: dict[str, QLineEdit] = {}
             self._rows: list[dict[str, Any]] = []
             self.selected_record_id: int | None = None
-            self._selected_timestamp = ""
 
-            self.save_button = QPushButton("Save New")
-            self.update_button = QPushButton("Update Selected")
             self.delete_button = QPushButton("Delete Selected")
-            self.clear_button = QPushButton("Clear Form")
-            for button in (
-                self.save_button,
-                self.update_button,
-                self.delete_button,
-                self.clear_button,
-            ):
-                button.setFixedSize(132, 34)
+            self.refresh_button = QPushButton("Refresh")
+            for button in (self.delete_button, self.refresh_button):
+                button.setMinimumSize(128, 34)
+
+            self.help_label = QLabel("Double-click a cell to edit.")
+            self.help_label.setObjectName("MapperHelpText")
 
             self.status_label = QLabel("Ready")
             self.status_label.setWordWrap(True)
 
             self.records_table = QTableWidget(0, len(TABLE_FIELDS))
             self.records_table.setHorizontalHeaderLabels(list(TABLE_HEADERS))
-            self.records_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+            self.records_table.setEditTriggers(
+                QAbstractItemView.EditTrigger.DoubleClicked
+                | QAbstractItemView.EditTrigger.EditKeyPressed
+            )
             self.records_table.setSelectionBehavior(
                 QAbstractItemView.SelectionBehavior.SelectRows
             )
@@ -109,11 +103,9 @@ else:
             self.records_table.setAlternatingRowColors(True)
             self.records_table.verticalHeader().setVisible(False)
             self.records_table.verticalHeader().setDefaultSectionSize(30)
-            self.records_table.horizontalHeader().setSectionResizeMode(
-                QHeaderView.ResizeMode.ResizeToContents
-            )
-            self.records_table.horizontalHeader().setStretchLastSection(True)
-            self.records_table.setMinimumHeight(300)
+            self.records_table.horizontalHeader().setStretchLastSection(False)
+            self.records_table.setMinimumHeight(360)
+            self.records_table.viewport().installEventFilter(self)
 
             self._build_layout()
             self._connect_signals()
@@ -123,44 +115,17 @@ else:
         def _build_layout(self) -> None:
             layout = QVBoxLayout(self)
             layout.setContentsMargins(16, 16, 16, 16)
-            layout.setSpacing(14)
+            layout.setSpacing(10)
 
-            form_group = QGroupBox("Mapper Details")
-            form_layout = QGridLayout(form_group)
-            form_layout.setContentsMargins(14, 16, 14, 14)
-            form_layout.setHorizontalSpacing(14)
-            form_layout.setVerticalSpacing(10)
-            form_layout.setColumnMinimumWidth(0, 96)
-            form_layout.setColumnMinimumWidth(2, 96)
-            form_layout.setColumnStretch(0, 0)
-            form_layout.setColumnStretch(1, 1)
-            form_layout.setColumnStretch(2, 0)
-            form_layout.setColumnStretch(3, 1)
-
-            left_fields = FORM_FIELDS[:7]
-            right_fields = FORM_FIELDS[7:]
-
-            for row_index, (field_name, label_text) in enumerate(left_fields):
-                self._add_form_row(form_layout, row_index, 0, field_name, label_text)
-
-            for row_index, (field_name, label_text) in enumerate(right_fields):
-                self._add_form_row(form_layout, row_index, 2, field_name, label_text)
-
-            action_row = max(len(left_fields), len(right_fields)) + 1
-            form_layout.setRowMinimumHeight(action_row - 1, 6)
-            buttons = (
-                self.save_button,
-                self.update_button,
-                self.delete_button,
-                self.clear_button,
-            )
-            for column_index, button in enumerate(buttons):
-                form_layout.addWidget(
-                    button,
-                    action_row,
-                    column_index,
-                    Qt.AlignmentFlag.AlignLeft,
-                )
+            action_row = QWidget()
+            action_layout = QHBoxLayout(action_row)
+            action_layout.setContentsMargins(0, 0, 0, 0)
+            action_layout.setSpacing(8)
+            action_layout.addWidget(self.delete_button)
+            action_layout.addWidget(self.refresh_button)
+            action_layout.addSpacing(8)
+            action_layout.addWidget(self.help_label)
+            action_layout.addStretch(1)
 
             records_group = QGroupBox("Saved Records")
             records_layout = QVBoxLayout(records_group)
@@ -168,72 +133,39 @@ else:
             records_layout.setSpacing(10)
             records_layout.addWidget(self.records_table, stretch=1)
 
-            layout.addWidget(form_group)
-            layout.addWidget(self.status_label)
+            layout.addWidget(action_row, stretch=0)
+            layout.addWidget(self.status_label, stretch=0)
             layout.addWidget(records_group, stretch=1)
 
-        def _add_form_row(
-            self,
-            layout: QGridLayout,
-            row: int,
-            label_column: int,
-            field_name: str,
-            label_text: str,
-        ) -> None:
-            label = QLabel(label_text)
-            label.setAlignment(
-                Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
-            )
-            label.setFixedWidth(96)
-            field = QLineEdit()
-            field.setMinimumHeight(30)
-            field.setAlignment(Qt.AlignmentFlag.AlignLeft)
-            self.inputs[field_name] = field
-            layout.addWidget(label, row, label_column)
-            layout.addWidget(field, row, label_column + 1)
-
         def _connect_signals(self) -> None:
-            self.save_button.clicked.connect(self.save_record)
-            self.update_button.clicked.connect(self.update_record)
             self.delete_button.clicked.connect(self.delete_record)
-            self.clear_button.clicked.connect(self.clear_form)
-            self.records_table.itemSelectionChanged.connect(self.populate_selected_record)
+            self.refresh_button.clicked.connect(lambda: self.refresh_records())
+            self.records_table.itemSelectionChanged.connect(self._selection_changed)
+            self.records_table.itemChanged.connect(self._persist_table_edit)
 
-        def save_record(self) -> None:
-            try:
-                record_id = self.service.save_record(self._form_values())
-            except ValueError as exc:
-                self._set_status(f"Error: {exc}")
+        def refresh_records(self, select_record_id: int | None = None) -> None:
+            self._rows = self.service.read_rows()
+            self.records_table.blockSignals(True)
+            self.records_table.clearSelection()
+            self.records_table.clearContents()
+            self.records_table.setRowCount(len(self._rows))
+
+            for row_index, row in enumerate(self._rows):
+                for column_index, field_name in enumerate(TABLE_FIELDS):
+                    item = QTableWidgetItem(str(row.get(field_name, "")))
+                    item.setTextAlignment(Qt.AlignmentFlag.AlignVCenter)
+                    item.setFlags(self._item_flags(field_name))
+                    self.records_table.setItem(row_index, column_index, item)
+
+            self.records_table.blockSignals(False)
+            self._configure_records_table()
+
+            if select_record_id is None:
+                self.selected_record_id = None
+                self._set_selection_actions_enabled(False)
                 return
 
-            self._clear_form()
-            self.refresh_records(select_record_id=record_id)
-            self._set_status("Record saved")
-
-        def update_record(self) -> None:
-            if self.selected_record_id is None:
-                self._set_status("Error: select a record before updating.")
-                return
-
-            record_id = self.selected_record_id
-            try:
-                updated = self.service.update_record(
-                    record_id,
-                    self._form_values(),
-                    timestamp=self._selected_timestamp,
-                )
-            except ValueError as exc:
-                self._set_status(f"Error: {exc}")
-                return
-
-            if not updated:
-                self._clear_form()
-                self.refresh_records()
-                self._set_status("Error: selected record no longer exists.")
-                return
-
-            self.refresh_records(select_record_id=record_id)
-            self._set_status("Record updated")
+            self._select_record(select_record_id)
 
         def delete_record(self) -> None:
             if self.selected_record_id is None:
@@ -256,73 +188,62 @@ else:
             else:
                 self._set_status("Error: selected record no longer exists.")
 
-            self._clear_form()
             self.refresh_records()
 
-        def clear_form(self) -> None:
-            self._clear_form()
-            self._set_status("Ready")
+        def _persist_table_edit(self, item: QTableWidgetItem) -> None:
+            row_index = item.row()
+            column_index = item.column()
+            if row_index < 0 or row_index >= len(self._rows):
+                return
 
-        def populate_selected_record(self) -> None:
+            field_name = TABLE_FIELDS[column_index]
+            if field_name not in EDITABLE_TABLE_FIELDS:
+                return
+
+            row = self._rows[row_index]
+            old_value = str(row.get(field_name, ""))
+            new_value = item.text()
+            values = {
+                name: str(row.get(name, ""))
+                for name in MAPPER_FIELDS
+                if name != "timestamp"
+            }
+            values[field_name] = new_value
+
+            try:
+                updated = self.service.update_record(
+                    int(row["id"]),
+                    values,
+                    timestamp=str(row.get("timestamp", "")),
+                )
+            except ValueError as exc:
+                self._set_item_text(item, old_value)
+                self._set_status(f"Error: {exc}")
+                return
+
+            if not updated:
+                self.refresh_records()
+                self._set_status("Error: selected record no longer exists.")
+                return
+
+            row[field_name] = new_value.strip()
+            self._set_status("Record updated")
+
+        def _selection_changed(self) -> None:
             selected_rows = self.records_table.selectionModel().selectedRows()
             if not selected_rows:
                 self.selected_record_id = None
-                self._selected_timestamp = ""
                 self._set_selection_actions_enabled(False)
                 return
 
             row_index = selected_rows[0].row()
             if row_index < 0 or row_index >= len(self._rows):
                 self.selected_record_id = None
-                self._selected_timestamp = ""
                 self._set_selection_actions_enabled(False)
                 return
 
-            row = self._rows[row_index]
-            self.selected_record_id = int(row["id"])
-            self._selected_timestamp = str(row.get("timestamp", ""))
-            for field_name, field in self.inputs.items():
-                field.setText(str(row.get(field_name, "")))
-
+            self.selected_record_id = int(self._rows[row_index]["id"])
             self._set_selection_actions_enabled(True)
-
-        def refresh_records(self, select_record_id: int | None = None) -> None:
-            self._rows = self.service.read_rows()
-            self.records_table.blockSignals(True)
-            self.records_table.clearSelection()
-            self.records_table.clearContents()
-            self.records_table.setRowCount(len(self._rows))
-
-            for row_index, row in enumerate(self._rows):
-                for column_index, field_name in enumerate(TABLE_FIELDS):
-                    item = QTableWidgetItem(str(row.get(field_name, "")))
-                    item.setTextAlignment(Qt.AlignmentFlag.AlignVCenter)
-                    self.records_table.setItem(row_index, column_index, item)
-            self.records_table.blockSignals(False)
-            self.records_table.resizeColumnsToContents()
-            self.records_table.horizontalHeader().setStretchLastSection(True)
-
-            if select_record_id is None:
-                self.selected_record_id = None
-                self._selected_timestamp = ""
-                self._set_selection_actions_enabled(False)
-                return
-
-            self._select_record(select_record_id)
-
-        def _clear_form(self) -> None:
-            self.records_table.clearSelection()
-            for field in self.inputs.values():
-                field.clear()
-            self.selected_record_id = None
-            self._selected_timestamp = ""
-            self._set_selection_actions_enabled(False)
-
-        def _form_values(self) -> dict[str, str]:
-            return {
-                field_name: field.text()
-                for field_name, field in self.inputs.items()
-            }
 
         def _select_record(self, record_id: int) -> None:
             for row_index, row in enumerate(self._rows):
@@ -331,21 +252,63 @@ else:
                     return
 
             self.selected_record_id = None
-            self._selected_timestamp = ""
             self._set_selection_actions_enabled(False)
 
         def _set_selection_actions_enabled(self, enabled: bool) -> None:
-            self.update_button.setEnabled(enabled)
             self.delete_button.setEnabled(enabled)
+
+        def _configure_records_table(self) -> None:
+            header = self.records_table.horizontalHeader()
+            header.setStretchLastSection(False)
+            note_index = TABLE_FIELDS.index("note")
+            for column_index, field_name in enumerate(TABLE_FIELDS):
+                self.records_table.setColumnHidden(
+                    column_index,
+                    field_name in HIDDEN_TABLE_FIELDS,
+                )
+                if field_name == "note":
+                    header.setSectionResizeMode(column_index, QHeaderView.ResizeMode.Stretch)
+                else:
+                    header.setSectionResizeMode(
+                        column_index,
+                        QHeaderView.ResizeMode.ResizeToContents,
+                    )
+            self.records_table.setColumnWidth(note_index, 260)
+
+        def _item_flags(self, field_name: str) -> Qt.ItemFlag:
+            flags = Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
+            if field_name in EDITABLE_TABLE_FIELDS:
+                flags |= Qt.ItemFlag.ItemIsEditable
+            return flags
+
+        def _set_item_text(self, item: QTableWidgetItem, value: str) -> None:
+            self.records_table.blockSignals(True)
+            item.setText(value)
+            self.records_table.blockSignals(False)
 
         def _set_status(self, message: str) -> None:
             self.status_label.setText(message)
             if self.status_callback is not None:
                 self.status_callback(message)
 
+        def eventFilter(self, source: object, event: QEvent) -> bool:
+            if (
+                source is self.records_table.viewport()
+                and event.type() == QEvent.Type.MouseButtonPress
+            ):
+                position_getter = getattr(event, "position", None)
+                if callable(position_getter):
+                    position = position_getter().toPoint()
+                else:
+                    position = event.pos()
+                if self.records_table.itemAt(position) is None:
+                    self.records_table.clearSelection()
+            return super().eventFilter(source, event)
+
 
 __all__ = [
-    "FORM_FIELDS",
+    "EDITABLE_TABLE_FIELDS",
+    "HIDDEN_TABLE_FIELDS",
     "MapperTab",
     "TABLE_FIELDS",
     "TABLE_HEADERS",

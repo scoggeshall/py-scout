@@ -10,7 +10,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="pyscout",
         description=(
-            "Py-Scout is a GUI-first switchport discovery and physical mapping tool."
+            "Py-Scout is a GUI-first switchport discovery and physical mapping tool. "
+            "Scapy packet capture on Windows requires Npcap."
         ),
     )
     subparsers = parser.add_subparsers(dest="command")

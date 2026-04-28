@@ -9,7 +9,7 @@ a = Analysis(
         ('assets\\pyscout-logo.png', 'assets'),
         ('assets\\pyscout-taskbar-icon.png', 'assets'),
     ],
-    hiddenimports=[],
+    hiddenimports=['scapy.all'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

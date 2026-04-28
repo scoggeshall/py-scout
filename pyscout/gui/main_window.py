@@ -40,7 +40,7 @@ class MainWindow(QMainWindow):
         self.tabs = QTabWidget()
         self.discovery_tab = DiscoveryTab(store, status_callback=self.show_status)
         self.mapper_tab = MapperTab(store, status_callback=self.show_status)
-        self.discovery_tab.mapper_record_saved.connect(self._show_saved_mapper_record)
+        self.discovery_tab.mapper_record_saved.connect(self._refresh_mapper_records)
 
         self.tabs.addTab(self.discovery_tab, "Discovery")
         self.tabs.addTab(self.mapper_tab, "Mapper")
@@ -56,10 +56,8 @@ class MainWindow(QMainWindow):
     def show_status(self, message: str) -> None:
         self.statusBar().showMessage(message or "Ready")
 
-    def _show_saved_mapper_record(self, record_id: int) -> None:
+    def _refresh_mapper_records(self, record_id: int) -> None:
         self.mapper_tab.refresh_records(select_record_id=record_id)
-        self.tabs.setCurrentWidget(self.mapper_tab)
-        self.show_status("Record saved")
 
     def _build_header(self) -> QFrame:
         header = QFrame()
