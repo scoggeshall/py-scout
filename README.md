@@ -1,12 +1,12 @@
 # Py-Scout
 
-Find exactly which switch port you're plugged into — instantly.
+Py-Scout is a GUI-first switchport discovery and physical mapping tool for Windows.
 
-Plug in → run → get switch + port → save mapping → done.
+It identifies the switch and port a device is connected to using LLDP/CDP, then allows you to persist that mapping.
 
 ---
 
-## What you get
+## Quick example
 
 ```text
 Switch: MDF-SW01
@@ -15,28 +15,11 @@ IP: 10.16.1.45
 Protocol: CDP
 ```
 
-No digging through configs. No guessing. No tshark.
-
 ---
 
-## Quick Start (10 seconds)
+## Core workflow
 
-1. Download the latest release
-2. Install Npcap (if prompted)
-3. Run `pyscout.exe`
-4. Click **Run Discovery**
-
----
-
-## Why this exists
-
-When you plug into a random wall jack, you usually don’t know:
-
-* which switch you hit
-* which port you're on
-* where that drop goes
-
-Py-Scout solves that immediately using LLDP/CDP.
+Plug in → Run discovery → See switch/port → Save mapping
 
 ---
 
