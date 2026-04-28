@@ -5,40 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="Py-Scout is a Windows switchport discovery and physical mapping tool for access-layer troubleshooting."
+      content="PyScout is a Windows switchport discovery and physical mapping tool for access-layer troubleshooting."
     >
-    <title>Py-Scout | Windows Switchport Discovery Tool</title>
+    <title>PyScout | Windows Switchport Discovery Tool</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <header class="site-header">
       <nav class="nav" aria-label="Primary navigation">
-        <a class="brand" href="#top" aria-label="Py-Scout home">
-          <img src="assets/pyscout.png" alt="" width="32" height="32">
-          <span>Py-Scout</span>
+        <a class="brand" href="#top" aria-label="PyScout home">
+          <img src="assets/pyscout.png" alt="" width="34" height="34">
+          <span>PyScout</span>
         </a>
         <div class="nav-links">
-          <a href="#does">What it does</a>
-          <a href="#use-when">Use it when</a>
+          <a href="#features">Features</a>
+          <a href="#use-cases">Use Cases</a>
+          <a href="#screenshots">Screenshots</a>
           <a href="#requirements">Requirements</a>
           <a href="#build">Build</a>
           <a href="https://github.com/scoggeshall/py-scout">GitHub</a>
         </div>
+        <a class="nav-download" href="https://github.com/scoggeshall/py-scout/releases/latest">
+          Download
+        </a>
       </nav>
     </header>
 
     <main id="top">
       <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-content">
+        <div class="hero-inner">
           <div class="hero-copy">
             <p class="eyebrow">Windows switchport discovery</p>
-            <h1 id="hero-title">Find exactly where you're connected</h1>
+            <h1 id="hero-title">Find the switchport before you touch the switch.</h1>
             <p class="hero-lead">
-              Plug into any network drop, run Py-Scout, and instantly see the switch and port.
+              Plug into any network drop, run PyScout, and see the connected switch and port in seconds.
             </p>
-            <p class="hero-note">No CLI tracing. No guessing. No digging through configs.</p>
-            <p class="hero-note">
-              Built for network engineers, desktop support, sysadmins, and field techs working at the access layer.
+            <p class="hero-support">
+              Built for access-layer troubleshooting, jack tracing, and physical network documentation.
             </p>
             <div class="hero-actions" aria-label="Project links">
               <a class="button primary" href="https://github.com/scoggeshall/py-scout/releases/latest">
@@ -48,90 +51,147 @@
                 View on GitHub
               </a>
             </div>
+            <ul class="meta-row" aria-label="Project metadata">
+              <li>Windows</li>
+              <li>LLDP/CDP</li>
+              <li>Physical mapping</li>
+              <li>Local utility</li>
+            </ul>
           </div>
-          <figure class="hero-logo-wrap">
-            <img class="hero-logo" src="assets/pyscout.png" alt="Py-Scout logo">
+
+          <div class="hero-visual" aria-label="PyScout product preview">
+            <div class="visual-header">
+              <img src="assets/pyscout.png" alt="" width="40" height="40">
+              <div>
+                <span class="visual-title">PyScout</span>
+                <span class="visual-subtitle">pyscout.exe</span>
+              </div>
+            </div>
+            <div class="mini-grid" aria-hidden="true">
+              <span>Drop</span>
+              <span>Switch</span>
+              <span>Port</span>
+            </div>
+            <pre class="output-card"><code>Switch: MDF-SW01
+Port: Gi1/0/24
+IP: 10.16.1.45
+Protocol: CDP</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="product-panel" aria-labelledby="product-title">
+        <div class="product-copy">
+          <p class="eyebrow">Field result</p>
+          <h2 id="product-title">The connected port, shown plainly.</h2>
+        </div>
+        <p class="product-line">
+          The point is not more data. The point is the right data first.
+        </p>
+      </section>
+
+      <section class="section" id="features" aria-labelledby="features-title">
+        <div class="section-heading">
+          <p class="eyebrow">Features</p>
+          <h2 id="features-title">Practical tools for access-layer work.</h2>
+        </div>
+        <div class="card-grid">
+          <article class="feature-card">
+            <h3>Switchport discovery</h3>
+            <p>Identifies the connected switch and interface using LLDP/CDP.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Physical mapping</h3>
+            <p>Save switchport-to-location mappings for wall jacks, patch panels, and field notes.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Network scanner</h3>
+            <p>Quickly scan a local subnet for basic device visibility.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Clean output</h3>
+            <p>Shows useful results without raw packet dumps or manual parsing.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section section-band" id="use-cases" aria-labelledby="use-cases-title">
+        <div class="section-heading">
+          <p class="eyebrow">Use Cases</p>
+          <h2 id="use-cases-title">For the work that happens at the drop.</h2>
+        </div>
+        <ul class="use-case-list">
+          <li>Trace unknown wall jacks</li>
+          <li>Verify patch panel records</li>
+          <li>Troubleshoot user drops</li>
+          <li>Confirm access-layer connectivity</li>
+          <li>Document switchport-to-location mappings</li>
+          <li>Clean up stale network records</li>
+        </ul>
+      </section>
+
+      <section class="section" id="screenshots" aria-labelledby="screenshots-title">
+        <div class="section-heading">
+          <p class="eyebrow">Screenshots</p>
+          <h2 id="screenshots-title">Discovery and mapping views.</h2>
+        </div>
+        <div class="screenshot-grid">
+          <figure class="screenshot-card">
+            <div class="screenshot-frame">
+              <img src="screenshots/cdp-only.png" alt="PyScout CDP discovery screenshot" loading="lazy">
+            </div>
+            <figcaption>CDP discovery</figcaption>
+          </figure>
+          <figure class="screenshot-card">
+            <div class="screenshot-frame">
+              <img src="screenshots/lldp-only.png" alt="PyScout LLDP discovery screenshot" loading="lazy">
+            </div>
+            <figcaption>LLDP discovery</figcaption>
+          </figure>
+          <figure class="screenshot-card">
+            <div class="screenshot-frame">
+              <img src="screenshots/mapper.png" alt="PyScout mapping view screenshot" loading="lazy">
+            </div>
+            <figcaption>Mapping view</figcaption>
           </figure>
         </div>
       </section>
 
-      <section class="section" id="does" aria-labelledby="does-title">
-        <div class="section-heading">
-          <p class="eyebrow">What Py-Scout does</p>
-          <h2 id="does-title">Answers the access-layer question first.</h2>
-        </div>
-        <ul class="feature-list">
-          <li>Identifies switch and port using LLDP/CDP</li>
-          <li>Shows clean, readable discovery output</li>
-          <li>Saves physical mappings</li>
-          <li>Provides a quick subnet scanner for local visibility</li>
-        </ul>
-      </section>
-
-      <section class="section split-section" id="use-when" aria-labelledby="use-when-title">
-        <div class="section-heading">
-          <p class="eyebrow">Use it when</p>
-          <h2 id="use-when-title">Field work needs a clear switchport answer.</h2>
-        </div>
-        <ul class="plain-list">
-          <li>Tracing unknown wall jacks</li>
-          <li>Verifying patch panel mappings</li>
-          <li>Troubleshooting user drops</li>
-          <li>Auditing switchport usage</li>
-          <li>Cleaning up access-layer documentation</li>
-        </ul>
-      </section>
-
-      <section class="section example-section" id="example" aria-labelledby="example-title">
-        <div class="section-heading">
-          <p class="eyebrow">Example output</p>
-          <h2 id="example-title">Readable output for the thing you need to know.</h2>
-        </div>
-        <pre><code>Switch: MDF-SW01
-Port: Gi1/0/24
-IP: 10.16.1.45
-Protocol: CDP</code></pre>
-      </section>
-
-      <section class="section focus-section" id="access-layer" aria-labelledby="access-layer-title">
-        <div class="section-heading">
-          <p class="eyebrow">Built for access-layer work</p>
-          <h2 id="access-layer-title">Focused on the physical connection problem.</h2>
-          <p>
-            Py-Scout is focused on one practical question: what switch and port am I
-            plugged into, and how do I document it?
-          </p>
-        </div>
-      </section>
-
-      <section class="section" id="requirements" aria-labelledby="requirements-title">
+      <section class="section section-band" id="requirements" aria-labelledby="requirements-title">
         <div class="section-heading">
           <p class="eyebrow">Requirements</p>
-          <h2 id="requirements-title">What you need</h2>
+          <h2 id="requirements-title">What PyScout needs.</h2>
         </div>
-        <ul class="plain-list compact-list">
-          <li>Windows</li>
-          <li>Npcap</li>
-          <li>LLDP/CDP enabled on the switchport</li>
-        </ul>
+        <div class="requirements-grid">
+          <div class="requirement-card">Windows</div>
+          <div class="requirement-card">Npcap</div>
+          <div class="requirement-card">LLDP or CDP enabled on the connected switchport</div>
+        </div>
+        <p class="note">
+          PyScout depends on discovery advertisements from the connected access switch.
+        </p>
       </section>
 
       <section class="section build-section" id="build" aria-labelledby="build-title">
         <div class="section-heading">
-          <p class="eyebrow">Build from source</p>
-          <h2 id="build-title">Source build</h2>
+          <p class="eyebrow">Build</p>
+          <h2 id="build-title">Build from source.</h2>
         </div>
-        <pre><code>python -m unittest discover
+        <pre class="build-card"><code>python -m unittest discover
 python -m compileall pyscout
 .\build.ps1</code></pre>
       </section>
     </main>
 
     <footer class="site-footer">
-      <p>Py-Scout is maintained on GitHub.</p>
+      <div class="footer-brand">
+        <img src="assets/pyscout.png" alt="" width="30" height="30">
+        <span>PyScout</span>
+      </div>
       <div class="footer-links">
         <a href="https://github.com/scoggeshall/py-scout/releases/latest">Download</a>
         <a href="https://github.com/scoggeshall/py-scout">Repository</a>
+        <a href="https://github.com/scoggeshall/py-scout/releases">Releases</a>
         <a href="https://github.com/scoggeshall/py-scout/issues">Issues</a>
       </div>
     </footer>
