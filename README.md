@@ -1,12 +1,12 @@
 # Py-Scout
 
-Py-Scout is a GUI-first switchport discovery and physical mapping tool for Windows.
+Py-Scout is a Windows-based switchport discovery and physical mapping tool.
 
-It identifies the switch and port a device is connected to using LLDP/CDP, then allows you to persist that mapping.
+It identifies the switch and port a device is connected to using LLDP/CDP and allows that mapping to be saved.
 
 ---
 
-## Quick example
+## Output
 
 ```text
 Switch: MDF-SW01
@@ -17,79 +17,71 @@ Protocol: CDP
 
 ---
 
-## Core workflow
+## Components
 
-Plug in → Run discovery → See switch/port → Save mapping
+* Discovery
 
----
+  * LLDP/CDP-based switchport identification
+  * Normalized switch, port, IP, and protocol output
+* Mapper
 
-## Features
+  * Save switchport-to-location mappings
+  * Useful for documenting wall jacks, patch panels, and access-layer drops
+* Network Scanner
 
-* One-click switchport discovery (LLDP + CDP)
-* Clean, readable output (no packet noise)
-* Works as a single Windows `.exe`
-* No tshark dependency
-* Table-based mapper for tracking drops
-* Manual or Auto Save of discovery results
-
----
-
-## How it works
-
-Py-Scout captures LLDP/CDP packets directly using Scapy and extracts:
-
-* Switch name
-* Port
-* Neighbor IP
-* Protocol
-* Timestamp
-
-Then lets you save and edit mappings.
+  * Subnet scan
+  * Optional hostname resolution
+  * Optional common port checks
+  * Best-effort device visibility, not a replacement for Nmap
 
 ---
 
 ## Requirements
 
 * Windows
-* Npcap (for packet capture)
-
-If packet capture is missing, Py-Scout tells you clearly.
+* Npcap
+* LLDP or CDP enabled on the connected switchport
 
 ---
 
-## Build (optional)
+## Usage
+
+1. Launch `pyscout.exe`
+2. Run Discovery
+3. View switch and port details
+4. Optionally save the mapping
+5. Use the Network Scanner for quick local subnet visibility
+
+---
+
+## Design Notes
+
+* Uses Layer 2 discovery protocols
+* Designed for access-layer troubleshooting
+* Output is normalized for readability
+* Mapper data is intended for practical field documentation
+
+---
+
+## Limitations
+
+* Requires LLDP or CDP advertisements from the connected switchport
+* Windows-only at this stage
+* Scanner results are best-effort
+* Port checks are intentionally basic
+
+---
+
+## Build
 
 ```powershell
 python -m unittest discover
 python -m compileall pyscout
 .\build.ps1
-.\dist\pyscout.exe
 ```
 
 ---
 
-## Use cases
+## Repository
 
-* Identify unknown wall jacks
-* Map patch panels to switch ports
-* Field troubleshooting
-* Network documentation
-
----
-
-## Bottom line
-
-This replaces:
-
-“Which switch port is this?”
-“Let me trace cables…”
-
-with:
-
-Run → Answer
-
----
-
-## Download
-
-https://github.com/scoggeshall/py-scout/releases/latest
+[https://github.com/scoggeshall/py-scout](https://github.com/scoggeshall/py-scout)

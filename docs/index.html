@@ -5,19 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="Py-Scout is a Windows switchport discovery and mapping tool for network engineers."
+      content="Py-Scout is a Windows switchport discovery and physical mapping tool for access-layer troubleshooting."
     >
-    <title>Py-Scout | Switchport Discovery for Network Engineers</title>
+    <title>Py-Scout | Windows Switchport Discovery Tool</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <header class="site-header">
       <nav class="nav" aria-label="Primary navigation">
-        <a class="brand" href="#top" aria-label="Py-Scout home">Py-Scout</a>
+        <a class="brand" href="#top" aria-label="Py-Scout home">
+          <img src="assets/pyscout.png" alt="" width="32" height="32">
+          <span>Py-Scout</span>
+        </a>
         <div class="nav-links">
-          <a href="#workflow">Workflow</a>
-          <a href="#features">Features</a>
-          <a href="#mapping">Mapping</a>
+          <a href="#does">What it does</a>
+          <a href="#use-when">Use it when</a>
           <a href="#requirements">Requirements</a>
           <a href="#build">Build</a>
           <a href="https://github.com/scoggeshall/py-scout">GitHub</a>
@@ -28,161 +30,108 @@
     <main id="top">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-content">
-          <div class="hero-copy-block">
-            <p class="eyebrow">Network field tool</p>
-            <h1 id="hero-title">Know the switchport before you leave the closet.</h1>
+          <div class="hero-copy">
+            <p class="eyebrow">Windows switchport discovery</p>
+            <h1 id="hero-title">Find exactly where you're connected</h1>
             <p class="hero-lead">
-              Py-Scout is a Windows desktop tool for discovering the switch, port,
-              neighbor address, and protocol seen from the jack you are plugged into.
+              Plug into any network drop, run Py-Scout, and instantly see the switch and port.
             </p>
-            <p class="hero-copy">
-              Built for network engineers doing physical mapping, closet cleanup,
-              drop validation, and field troubleshooting.
+            <p class="hero-note">No CLI tracing. No guessing. No digging through configs.</p>
+            <p class="hero-note">
+              Built for network engineers, desktop support, sysadmins, and field techs working at the access layer.
             </p>
             <div class="hero-actions" aria-label="Project links">
               <a class="button primary" href="https://github.com/scoggeshall/py-scout/releases/latest">
                 Download latest release
               </a>
               <a class="button secondary" href="https://github.com/scoggeshall/py-scout">
-                View source
+                View on GitHub
               </a>
             </div>
           </div>
-          <figure class="hero-logo-panel">
-            <img
-              class="hero-logo"
-              src="assets/pyscout.png"
-              alt="Py-Scout app icon"
-            >
+          <figure class="hero-logo-wrap">
+            <img class="hero-logo" src="assets/pyscout.png" alt="Py-Scout logo">
           </figure>
         </div>
       </section>
 
-      <section class="section compact-section" id="workflow" aria-labelledby="workflow-title">
+      <section class="section" id="does" aria-labelledby="does-title">
         <div class="section-heading">
-          <p class="eyebrow">Workflow</p>
-          <h2 id="workflow-title">Plug in. Discover. Save the mapping.</h2>
+          <p class="eyebrow">What Py-Scout does</p>
+          <h2 id="does-title">Answers the access-layer question first.</h2>
         </div>
-        <div class="step-grid">
-          <article class="step-card">
-            <span class="step-number">01</span>
-            <h3>Connect</h3>
-            <p>Plug your laptop into the wall jack, patch cable, or switchport being traced.</p>
-          </article>
-          <article class="step-card">
-            <span class="step-number">02</span>
-            <h3>Run discovery</h3>
-            <p>Py-Scout listens for neighbor discovery frames and normalizes the useful fields.</p>
-          </article>
-          <article class="step-card">
-            <span class="step-number">03</span>
-            <h3>Document</h3>
-            <p>Save the result with location, wall jack, patch panel, or field notes.</p>
-          </article>
-        </div>
+        <ul class="feature-list">
+          <li>Identifies switch and port using LLDP/CDP</li>
+          <li>Shows clean, readable discovery output</li>
+          <li>Saves physical mappings</li>
+          <li>Provides a quick subnet scanner for local visibility</li>
+        </ul>
       </section>
 
-      <section class="section" id="features" aria-labelledby="features-title">
+      <section class="section split-section" id="use-when" aria-labelledby="use-when-title">
         <div class="section-heading">
-          <p class="eyebrow">Why it exists</p>
-          <h2 id="features-title">A practical mapping tool, not a packet viewer.</h2>
-          <p>
-            Py-Scout keeps the field workflow simple: identify the upstream switchport,
-            capture the result, and build a clean record you can use later.
-          </p>
+          <p class="eyebrow">Use it when</p>
+          <h2 id="use-when-title">Field work needs a clear switchport answer.</h2>
         </div>
-        <div class="feature-grid">
-          <article class="card">
-            <h3>Switchport discovery</h3>
-            <p>Find the advertised switch, interface, management address, and discovery protocol.</p>
-          </article>
-          <article class="card">
-            <h3>Readable results</h3>
-            <p>Shows the fields an engineer needs without forcing you to inspect raw frames.</p>
-          </article>
-          <article class="card">
-            <h3>Persistent mapping</h3>
-            <p>Keep a local table of known ports, locations, and notes for repeatable documentation.</p>
-          </article>
-          <article class="card">
-            <h3>Windows-first GUI</h3>
-            <p>Designed around a desktop workflow instead of a pile of one-off terminal commands.</p>
-          </article>
-          <article class="card">
-            <h3>Field-friendly output</h3>
-            <p>Useful during closet work, jack validation, refresh projects, and troubleshooting calls.</p>
-          </article>
-          <article class="card">
-            <h3>Engineer-owned</h3>
-            <p>Small, inspectable, and built for real network operations instead of generic inventory.</p>
-          </article>
-        </div>
+        <ul class="plain-list">
+          <li>Tracing unknown wall jacks</li>
+          <li>Verifying patch panel mappings</li>
+          <li>Troubleshooting user drops</li>
+          <li>Auditing switchport usage</li>
+          <li>Cleaning up access-layer documentation</li>
+        </ul>
       </section>
 
-      <section class="section command-section" id="example" aria-labelledby="example-title">
+      <section class="section example-section" id="example" aria-labelledby="example-title">
         <div class="section-heading">
-          <p class="eyebrow">Example</p>
-          <h2 id="example-title">The kind of output you actually need.</h2>
+          <p class="eyebrow">Example output</p>
+          <h2 id="example-title">Readable output for the thing you need to know.</h2>
         </div>
         <pre><code>Switch: MDF-SW01
 Port: Gi1/0/24
-Neighbor IP: 10.16.1.45
-Protocol: CDP
-Location: Main Library / 2nd Floor
-Jack: 2A-114
-Patch Panel: PP-03 / Port 24
-Note: Public workstation drop</code></pre>
+IP: 10.16.1.45
+Protocol: CDP</code></pre>
       </section>
 
-      <section class="section split-section" id="mapping" aria-labelledby="mapping-title">
+      <section class="section focus-section" id="access-layer" aria-labelledby="access-layer-title">
         <div class="section-heading">
-          <p class="eyebrow">Mapping</p>
-          <h2 id="mapping-title">Built for the part most tools ignore.</h2>
+          <p class="eyebrow">Built for access-layer work</p>
+          <h2 id="access-layer-title">Focused on the physical connection problem.</h2>
           <p>
-            Discovery is only step one. The real value is turning a live switchport
-            result into a persistent physical map.
+            Py-Scout is focused on one practical question: what switch and port am I
+            plugged into, and how do I document it?
           </p>
         </div>
-        <ul class="detail-list">
-          <li>Switch and interface</li>
-          <li>Protocol seen from the drop</li>
-          <li>Neighbor management address</li>
-          <li>Wall jack or room location</li>
-          <li>Patch panel reference</li>
-          <li>Notes for cleanup or follow-up work</li>
-        </ul>
       </section>
 
       <section class="section" id="requirements" aria-labelledby="requirements-title">
         <div class="section-heading">
-          <p class="eyebrow">Install</p>
-          <h2 id="requirements-title">Requirements</h2>
+          <p class="eyebrow">Requirements</p>
+          <h2 id="requirements-title">What you need</h2>
         </div>
-        <ul class="check-list two-column-list">
+        <ul class="plain-list compact-list">
           <li>Windows</li>
           <li>Npcap</li>
-          <li>Network interface connected to the target drop</li>
-          <li>LLDP or CDP enabled on the upstream switch</li>
+          <li>LLDP/CDP enabled on the switchport</li>
         </ul>
       </section>
 
-      <section class="section command-section" id="build" aria-labelledby="build-title">
+      <section class="section build-section" id="build" aria-labelledby="build-title">
         <div class="section-heading">
-          <p class="eyebrow">Source</p>
-          <h2 id="build-title">Build from source</h2>
+          <p class="eyebrow">Build from source</p>
+          <h2 id="build-title">Source build</h2>
         </div>
         <pre><code>python -m unittest discover
 python -m compileall pyscout
-.\build.ps1
-.\dist\pyscout.exe</code></pre>
+.\build.ps1</code></pre>
       </section>
     </main>
 
     <footer class="site-footer">
       <p>Py-Scout is maintained on GitHub.</p>
       <div class="footer-links">
+        <a href="https://github.com/scoggeshall/py-scout/releases/latest">Download</a>
         <a href="https://github.com/scoggeshall/py-scout">Repository</a>
-        <a href="https://github.com/scoggeshall/py-scout/releases">Releases</a>
         <a href="https://github.com/scoggeshall/py-scout/issues">Issues</a>
       </div>
     </footer>
